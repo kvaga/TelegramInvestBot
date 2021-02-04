@@ -7,4 +7,5 @@ bin/
 *.sh
 *.bat
 *.log
+qqq
 /target/
