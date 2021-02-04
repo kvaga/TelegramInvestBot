@@ -3,8 +3,8 @@
 .class
 .settings
 bin/
-.env
-.sh
+*.env
+*.sh
 *.bat
-.log
+*.log
 /target/

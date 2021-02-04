@@ -1,0 +1,11 @@
+#!/bin/sh
+# crontab -e # it sets the cron
+# 0 */4 * * * exec.sh # sets the cron for each 4 hours
+clear
+./stop.sh
+APP_HOME_DIR=/home/user/telegrambot
+APP_DATA_DIR=/home/user/telegrambot_data
+LIBS=lib/aopalliance-1.0.jar:lib/commons-cli-1.0.jar:lib/commons-codec-1.9.jar:lib/commons-io-2.5.jar:lib/commons-lang-2.1.jar:lib/commons-logging-1.2.jar:lib/commons-logging-api-1.1.jar:lib/grizzly-framework-2.3.28.jar:lib/grizzly-http-2.3.28.jar:lib/grizzly-http-server-2.3.28.jar:lib/guava-19.0.jar:lib/guice-4.1.0.jar:lib/hk2-api-2.5.0-b32.jar:lib/hk2-locator-2.5.0-b32.jar:lib/hk2-utils-2.5.0-b32.jar:lib/httpclient-4.5.3.jar:lib/httpcore-4.4.6.jar:lib/httpmime-4.5.3.jar:lib/jackson-annotations-2.8.0.jar:lib/jackson-core-2.8.7.jar:lib/jackson-databind-2.8.7.jar:lib/jackson-jaxrs-base-2.8.7.jar:lib/jackson-jaxrs-json-provider-2.8.7.jar:lib/jackson-module-jaxb-annotations-2.8.7.jar:lib/javassist-3.20.0-GA.jar:lib/javax.annotation-api-1.2.jar:lib/javax.inject-1.jar:lib/javax.inject-2.5.0-b32.jar:lib/javax.ws.rs-api-2.0.1.jar:lib/jersey-client-2.25.1.jar:lib/jersey-common-2.25.1.jar:lib/jersey-container-grizzly2-http-2.25.1.jar:lib/jersey-entity-filtering-2.25.1.jar:lib/jersey-guava-2.25.1.jar:lib/jersey-media-jaxb-2.25.1.jar:lib/jersey-media-json-jackson-2.25.1.jar:lib/jersey-server-2.25.1.jar:lib/json-20160810.jar:lib/log4j-1.2.17.jar:lib/osgi-resource-locator-1.0.1.jar:lib/telegrambots-3.5.jar:lib/telegrambots-meta-3.5.jar:lib/telegramsendmessage-1.4.jar:lib/validation-api-1.1.0.Final.jar
+
+java -Dlog4j.configurationFile=file:$APP_HOME_DIR/conf/log4j.xml -Dlog4j.debug -cp $LIBS:$APP_HOME_DIR/conf:$APP_HOME_DIR/target/classes telegrambot.App $APP_DATA_DIR/StocksTracking.csv
+
