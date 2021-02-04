@@ -1,0 +1,10 @@
+.project
+.classpath
+.class
+.settings
+bin/
+.env
+.sh
+.bat
+.log
+/target/
