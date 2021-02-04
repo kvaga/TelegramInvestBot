@@ -1,0 +1,3 @@
+#/bin/bash
+APP_HOME_DIR=/home/user/telegrambot
+kill -9 $(ps -ef | grep "Dlog4j.configurationFile=file:$APP_HOME_DIR/conf/log4j.xml" | grep -v grep | awk '{print $2}')
