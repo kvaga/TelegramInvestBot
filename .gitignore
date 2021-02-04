@@ -5,6 +5,6 @@
 bin/
 .env
 .sh
-.bat
+*.bat
 .log
 /target/
