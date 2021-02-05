@@ -15,8 +15,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 // https://habr.com/ru/post/476306/
 
-public class Bot extends TelegramLongPollingBot {
-    private static final Logger log = Logger.getLogger(Bot.class);
+public class _Bot extends TelegramLongPollingBot {
+    private static final Logger log = Logger.getLogger(_Bot.class);
 
     final int RECONNECT_PAUSE =10000;
 
@@ -24,7 +24,7 @@ public class Bot extends TelegramLongPollingBot {
     String userName;
     String token;
     
-    public Bot(String userName, String token) {
+    public _Bot(String userName, String token) {
     	this.userName=userName;
     	this.token=token;
     }
@@ -125,8 +125,8 @@ public class Bot extends TelegramLongPollingBot {
             try {
                 Thread.sleep(RECONNECT_PAUSE);
             } catch (InterruptedException e1) {
-                e1.printStackTrace();
-                return;
+            	log.error("Exception during reconnect pause of the bot", e);
+            	return;
             }
             botConnect();
         }

@@ -3,7 +3,7 @@ package telegrambot;
 public class ObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST {
 	private String stockTiker;
 	private String stockName;
-	private float watchPrice;
+	private float watchPrice=Float.MIN_VALUE;
 	public String getStockTiker() {
 		return stockTiker;
 	}
