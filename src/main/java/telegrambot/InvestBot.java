@@ -98,7 +98,7 @@ public class InvestBot extends TelegramLongPollingBot {
 				ObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST objectForSCENARIO_ADD_STOCK_TO_WATCHLIST = new ObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST();
 				user.setObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST(objectForSCENARIO_ADD_STOCK_TO_WATCHLIST);
 			}
-			user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().setStockTiker(update.getMessage().getText());
+			user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().setStockTiker(update.getMessage().getText().toUpperCase());
 			
 			//Проверяем существует ли такая акция по тикеру
 			try {
