@@ -280,7 +280,7 @@ public class InvestBot extends TelegramLongPollingBot {
 											// TODO Auto-generated catch block
 											log.error("Exception", e);
 										}
-										simpleReply(update, "Укажите тикер акции");
+										simpleReply(update, "Укажите просто тикер акции либо тикер и цену отслеживания через пробел");
 										user.setState(User.STATE_WAIT_FOR_STOCK_TICKER);
 //										scenarioAddStockToWatchList(update, user);
 										return;
