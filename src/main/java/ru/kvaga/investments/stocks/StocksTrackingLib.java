@@ -306,6 +306,7 @@ public class StocksTrackingLib {
 	}
 
 	public static void updateCurrentPricesOfStocks(String URL_TEXT_TINKOFF, File dataFileName) throws Exception {
+		log.info("Update stocks job started");
 		ArrayList<StockItem> actualStockItems = new ArrayList<StockItem>();
 		ArrayList<StockItemForPrinting> stockItemsForPrinting = new ArrayList<StockItemForPrinting>();
 
@@ -315,6 +316,7 @@ public class StocksTrackingLib {
 		try {
 			for (StockItem si : StocksTrackingLib.getListOfStocksFromFile(dataFileName)) {
 				// We can must catch all exception for earch iteration for the future continueation
+				log.debug("===> Processing ["+si.getName()+"] started <===");
 				try {
 					StockItem actualStockItem = new StockItem();
 					double currentPrice = 0;
