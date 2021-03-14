@@ -9,22 +9,27 @@ public class User {
 	
 	public static final int STATE_IDLE=1;
 	public static final int STATE_WAIT_FOR_CHOICE_OF_OPERATION=2;
-	public static final int STATE_WAIT_FOR_STOCK_TICKER = 3;
+	public static final int STATE_WAIT_FOR_TICKER = 3;
 	public static final int STATE_WAIT_FOR_WATCH_PRICE = 4;
 	private static HashMap<Integer, String> states = new HashMap<Integer, String>(){{
 		put(STATE_IDLE, "STATE_IDLE");
 		put(STATE_WAIT_FOR_CHOICE_OF_OPERATION, "STATE_WAIT_FOR_CHOICE_OF_OPERATION");
-		put(STATE_WAIT_FOR_STOCK_TICKER, "STATE_WAIT_FOR_STOCK_TICKER");
+		put(STATE_WAIT_FOR_TICKER, "STATE_WAIT_FOR_TICKER");
 		put(STATE_WAIT_FOR_WATCH_PRICE, "STATE_WAIT_FOR_WATCH_PRICE");
 	}};
 	
 	public static final int SCENARIO_NONE=1;
 	public static final int SCENARIO_ADD_STOCK_TO_PORTFOLIO = 2;
 	public static final int SCENARIO_ADD_STOCK_TO_WATCHLIST = 3;
+	public static final int SCENARIO_ADD_FUND_TO_WATCHLIST = 4;
+	public static final int SCENARIO_ADD_BOND_TO_WATCHLIST = 5;
+
 	private static HashMap<Integer, String> scenarios = new HashMap<Integer, String>(){{
 		put(SCENARIO_NONE, "SCENARIO_NONE");
 		put(SCENARIO_ADD_STOCK_TO_PORTFOLIO, "SCENARIO_ADD_STOCK_TO_PORTFOLIO");
 		put(SCENARIO_ADD_STOCK_TO_WATCHLIST, "SCENARIO_ADD_STOCK_TO_WATCHLIST");
+		put(SCENARIO_ADD_FUND_TO_WATCHLIST, "SCENARIO_ADD_FUND_TO_WATCHLIST");
+		put(SCENARIO_ADD_BOND_TO_WATCHLIST, "SCENARIO_ADD_BOND_TO_WATCHLIST");
 	}};
 
 	public static String getStateNameById(int id) {

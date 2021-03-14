@@ -20,17 +20,26 @@ public class App {
 	private static String TELEGRAM_CHANNEL_NAME;
 	private static String TELEGRAM_BOT_NAME;
 	
-	public static String DATA_FILE="";
+	public static String DATA_FILE_STOCKS="";
+	public static String DATA_FILE_ETFS="";
+	public static String DATA_FILE_BONDS="";
 
     public static void main(String[] args) throws FileNotFoundException, IOException, UnsupportedParameterException {
-    	if(args.length!=1) {
-    		log.error("The first parameter of application must be a path to the stocks list file.\n"
+    	if(args.length!=3) {
+    		log.error("The parameters of application must be a pathes to the stocks, etfs amd bonds list files.\n"
     				+ "For instance:\n"
-    				+ "#java App data/StocksTracking.csv\n"
+    				+ "#java App -data_file_stocks=data/StocksTracking.csv -data_file_etfs=data/ETFsTracking.csv -data_file_bonds=data/BondsTracking.csv\n"
     				+ "Exit.");
     		System.exit(-1);
     	}
-    	DATA_FILE=args[0];
+    	DATA_FILE_STOCKS=getConsoleParameter("-data_file_stocks", args);
+    	DATA_FILE_ETFS=getConsoleParameter("-data_file_etfs", args);
+    	DATA_FILE_BONDS=getConsoleParameter("-data_file_bonds", args);
+    	log.info("DATA_FILE_STOCKS="+DATA_FILE_STOCKS);
+    	log.info("DATA_FILE_ETFS="+DATA_FILE_ETFS);
+    	log.info("DATA_FILE_BONDS="+DATA_FILE_BONDS);
+
+    	
     	log.info("\n\n\n"
     			+ "============================="
     			+ "        InvestBot Start      "
@@ -39,9 +48,17 @@ public class App {
 		String configFileName="conf/InvestBot.env";
     	getParameters(configFileName);
 		telegramSendMessage = new ru.kvaga.telegram.sendmessage.TelegramSendMessage(TELEGRAM_TOKEN, TELEGRAM_CHANNEL_NAME, TelegramSendMessage.PARSE_MODE_HTML, TelegramSendMessage.WEB_PAGE_PREVIEW_DISABLE);
-		File listOfStocksFile = new File(DATA_FILE);
-    	
-    	BackgroudJobManager.init(listOfStocksFile);
+		
+		File listOfStocksFile = new File(DATA_FILE_STOCKS);
+		File listOfETFsFile = new File(DATA_FILE_ETFS);
+		File listOfBondsFile = new File(DATA_FILE_BONDS);
+
+		if(!listOfStocksFile.exists() || !listOfETFsFile.exists() || !listOfBondsFile.exists()) {
+			log.error("One or more data files don't exist");
+			System.exit(-1);
+		}
+		
+    	BackgroudJobManager.init(listOfStocksFile, listOfETFsFile, listOfBondsFile);
         
     	ApiContextInitializer.init();
         Users.addUser(new User("Kvagalex"));
@@ -65,4 +82,13 @@ public class App {
 		log.debug(String.format("telegram.bot.name=%s ", TELEGRAM_BOT_NAME));
 
 	}
+    
+    private static String getConsoleParameter(String parameter, String args[]) {
+    	for(String str : args) {
+    		if(str.startsWith(parameter+"=")) {
+    			return str.replaceAll(parameter+"=", "");
+    		}
+    	}
+    	return null;
+    }
 }

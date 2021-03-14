@@ -45,8 +45,8 @@ public class StocksTrackingException extends Exception{
 	}
 	
 	public static class GetContentOFSiteException extends StocksTrackingException{
-		public GetContentOFSiteException(String message, String stockName, String url) {
-			super(String.format("\nAn error has occured during getting current price of stock [%s] for URL [%s] \n", stockName, url) + message);
+		public GetContentOFSiteException(String message, String url) {
+			super(String.format("\nAn error has occured during getting current price of stock for URL [%s] \n", url) + message);
 		}
 		
 		

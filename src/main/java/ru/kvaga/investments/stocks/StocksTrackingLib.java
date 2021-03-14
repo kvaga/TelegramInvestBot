@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,15 +32,16 @@ import ru.kvaga.investments.stocks.StocksTrackingException.ReadStockItemsFileExc
 public class StocksTrackingLib {
 	private static Logger log = LogManager.getLogger(StocksTrackingLib.class);
 
-	public static String getFullNameOfStock(String response, String stockName, String urlText)
+	public static synchronized String getFullNameOfStock(String response, String stockName, String urlText, String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME)
 			throws ru.kvaga.investments.stocks.StocksTrackingException.GetFullStockNameException.ParsingResponseException {
 //		String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME = "<meta charset=\"UTF-8\">.*"
 //				+ "<title data-meta-dynamic=\"true\">РљСѓРїРёС‚СЊ Р°РєС†РёРё (?<fullName>.*) \\(" + stockName
 //				+ "\\).*</title>.*" + "<meta property=\"og:title\"";
-		String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME = "<meta charset=\"UTF-8\">.*"
-				+ "<title data-meta-dynamic=\"true\">.* .* (?<fullName>.*) \\(" + stockName + "\\).*</title>.*"
-				+ "<meta property=\"og:title\"";
+//		String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME = "<meta charset=\"UTF-8\">.*"
+//				+ "<title data-meta-dynamic=\"true\">.* .* (?<fullName>.*) \\(" + stockName + "\\).*</title>.*"
+//				+ "<meta property=\"og:title\"";
 
+		
 		response = response.replaceAll("\r\n", "").replaceAll("\n", "");
 		if (response.length() >= 500) {
 			response = response.substring(0, 499);
@@ -56,12 +58,12 @@ public class StocksTrackingLib {
 			log.debug("Found full name of ticker " + stockName + ": " + stockFullName);
 
 		} else {
-			log.error("[point 2]");
+			
 			throw new StocksTrackingException.GetFullStockNameException.ParsingResponseException(String.format(
 					"Couldn't find fullName for stock during parsing web response with " + "regex pattern text [%s]. \n"
-//					+ "Web response [%s]"
+					+ "Web response [%s]"
 					, REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME
-//					,response
+					,response
 			), urlText);
 		}
 
@@ -69,7 +71,7 @@ public class StocksTrackingLib {
 
 	}
 
-	public static void storeActualData(File file, ArrayList<StockItem> al) throws StoreDataException {
+	public static synchronized  void storeActualData(File file, ArrayList<StockItem> al) throws StoreDataException {
 		StringBuilder sb = new StringBuilder();
 		for (StockItem si : al) {
 			sb.append(si.getName());
@@ -99,7 +101,8 @@ public class StocksTrackingLib {
 
 	}
 
-	public static String getContentOfSite(String stockShortName, String urlText)
+	/*
+	public static synchronized String getContentOfSite( String urlText)
 			throws Common, GetContentOFSiteException {
 		URL url = null;
 		HttpURLConnection con = null;
@@ -119,7 +122,7 @@ public class StocksTrackingLib {
 			}
 			return sb.toString();
 		} catch (IOException e) {
-			throw new StocksTrackingException.GetContentOFSiteException(e.getMessage(), stockShortName, urlText);
+			throw new StocksTrackingException.GetContentOFSiteException(e.getMessage(), urlText);
 		} finally {
 			if (br != null) {
 				try {
@@ -131,8 +134,8 @@ public class StocksTrackingLib {
 		}
 
 	}
-
-	public static double getCurrentPriceOfStock(String name, String response, String url)
+*/
+	public static synchronized double getCurrentPriceOfStock(String name, String response, String url)
 			throws Common, ParsingResponseException {
 		String REGEX_PATTERN_TEXT_MOEXX = "\\<row SECID=\"" + name
 				+ "\" PREVADMITTEDQUOTE=\"(?<lastPrice>\\d+\\.{0,1}\\d*)\" />";
@@ -158,7 +161,7 @@ public class StocksTrackingLib {
 		}
 	}
 
-	public static void removeStockItemByTikerFromFile(String ticker, File file) throws StocksTrackingException {
+	public static synchronized void removeStockItemByTikerFromFile(String ticker, File file) throws StocksTrackingException {
 		ArrayList<StockItem> al = new ArrayList<StockItem>();
 		BufferedReader br = null;
 		String s;
@@ -209,7 +212,7 @@ public class StocksTrackingLib {
 
 	}
 
-	public static StockItem getStockItemByTickerFromFile(String ticker, File file)
+	public static synchronized StockItem getStockItemByTickerFromFile(String ticker, File file)
 			throws ru.kvaga.investments.stocks.StocksTrackingException.ReadStockItemsFileException.Common,
 			IncorrectFormatOfRow, ItemsFileNotFound {
 		BufferedReader br = null;
@@ -259,7 +262,7 @@ public class StocksTrackingLib {
 
 	}
 
-	public static ArrayList<StockItem> getListOfStocksFromFile(File file) throws StocksTrackingException {
+	public static synchronized ArrayList<StockItem> getListOfStocksFromFile(File file) throws StocksTrackingException {
 		ArrayList<StockItem> al = new ArrayList<StockItem>();
 		BufferedReader br = null;
 		String s;
@@ -305,8 +308,8 @@ public class StocksTrackingLib {
 
 	}
 
-	public static void updateCurrentPricesOfStocks(String URL_TEXT_TINKOFF, File dataFileName) throws Exception {
-		log.info("Update stocks job started");
+	public static synchronized void updateCurrentPricesOfStocks(String label, String URL_TEXT_TINKOFF, File dataFileName, String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME) throws Exception {
+		log.info("Update "+label+"s job started");
 		ArrayList<StockItem> actualStockItems = new ArrayList<StockItem>();
 		ArrayList<StockItemForPrinting> stockItemsForPrinting = new ArrayList<StockItemForPrinting>();
 
@@ -326,17 +329,17 @@ public class StocksTrackingLib {
 						url = String.format(URL_TEXT_TINKOFF, si.getName());
 						log.debug("Url is ready: " + url);
 
-//					String response = StocksTrackingLib.getContentOfSite(si.getName(), url);
+//					String response = StocksTrackingLib.getContentOfSite( url);
 						String response = TelegramBotLib.getURLContent(String.format(url, si.getName()));
 						log.debug("The response received");
-						String fullName = getFullNameOfStock(StocksTrackingLib.getContentOfSite(si.getName(), url),
-								si.getName(), url);
+						String fullName = getFullNameOfStock(response /*StocksTrackingLib.getContentOfSite(url)*/,
+								si.getName(), url, String.format(REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME, si.getName()));
 						log.debug("Full name received: " + fullName);
 						currentPrice = StocksTrackingLib.getCurrentPriceOfStock(si.getName(), response, url);
 						log.debug("Current price received: " + currentPrice);
 						actualStockItem.setLastPrice(currentPrice);
 
-						log.debug("Analyzing stock for sending [ticker: " + si.getName() + ", traceablePrice: "
+						log.debug("Analyzing "+label+" for sending [ticker: " + si.getName() + ", traceablePrice: "
 								+ si.getTraceablePrice() + ", lastPrice: " + si.getLastPrice() + "]");
 
 						if (si.getTraceablePrice() > currentPrice) {
@@ -371,7 +374,7 @@ public class StocksTrackingLib {
 					actualStockItems.add(actualStockItem);
 				} catch (Exception e) {
 					log.error("Exception. In such case we add item retrived from file [" + dataFileName
-							+ "] without any changes to the actualStockItems list and continue to the next item from file",
+							+ "] without any changes to the actual"+label+"Items list and continue to the next item from file",
 							e);
 					actualStockItems.add(si);
 					try {
@@ -387,11 +390,11 @@ public class StocksTrackingLib {
 			StocksTrackingLib.storeActualData(dataFileName, actualStockItems);
 
 			// sending to telegram
-			log.debug("Sorting stocks...");
+			log.debug("Sorting "+label+"s...");
 			Collections.sort(stockItemsForPrinting, new StockItemForPrintingComparatorByPercentFromTrackingPrice());
 //			StringBuilder message = new StringBuilder();
 			log.debug("Sending messages...");
-			App.telegramSendMessage.sendMessage("List of stock's tracking prices");
+			App.telegramSendMessage.sendMessage("List of "+label+"'s tracking prices");
 //			int countOfMessages=0;
 			for (StockItemForPrinting sifp : stockItemsForPrinting) {
 				/*
@@ -406,8 +409,8 @@ public class StocksTrackingLib {
 				 * String.format("%.2f",sifp.getPercentFromLastPrice()) +"% from Last Price)" +
 				 * TelegramSendMessage.LINEBREAK + TelegramSendMessage.LINEBREAK );
 				 */
-				String message = "Stock: <a href='" + String.format(URL_TEXT_TINKOFF, sifp.getName()) + "'>"
-						+ sifp.getName() + " </a>" + sifp.getFullName() + TelegramSendMessage.LINEBREAK
+				String message = label+": <a href='" + String.format(URL_TEXT_TINKOFF, sifp.getName()) + "'>"
+						+ sifp.getName() + "</a> " + URLEncoder.encode(sifp.getFullName(),StandardCharsets.UTF_8.toString()) + TelegramSendMessage.LINEBREAK
 						+ String.format("Tracking Price: %.2f", sifp.getTraceablePrice())
 						+ TelegramSendMessage.LINEBREAK + String.format("Last Price: %.2f", sifp.getLastPrice())
 						+ TelegramSendMessage.LINEBREAK + String.format("Current Price: %.2f", sifp.getCurrentPrice())
@@ -416,9 +419,11 @@ public class StocksTrackingLib {
 						+ String.format("%.2f", sifp.getPercentFromLastPrice()) + "% from Last Price)";
 				log.debug("Message:\n" + message);
 				try {
+//					App.telegramSendMessage.sendMessage(URLEncoder.encode(message,StandardCharsets.UTF_8.toString()));
 					App.telegramSendMessage.sendMessage(message);
+
 					log.info(
-							"Message for stock " + sifp.getName() + " " + sifp.getFullName() + " was sent to telegram");
+							"Message for "+label+" " + sifp.getName() + " " + sifp.getFullName() + " was sent to telegram");
 				} catch (Exception e) {
 					if (e.getMessage().contains("Server returned HTTP response code: 429 for URL")) {
 						log.error(
@@ -426,20 +431,21 @@ public class StocksTrackingLib {
 										+ sifp.getName() + " " + sifp.getFullName(),
 								e);
 						Thread.sleep(60 * 1000);
-						log.debug("Trying to resend message about stock " + sifp.getName() + " " + sifp.getFullName());
+						log.debug("Trying to resend message about "+label+" " + sifp.getName() + " " + sifp.getFullName());
 						try {
 							App.telegramSendMessage.sendMessage(message);
-							log.debug("Resend SUCCESSFUL for stock " + sifp.getName() + " " + sifp.getFullName());
+							log.debug("Resend SUCCESSFUL for "+label+" " + sifp.getName() + " " + sifp.getFullName());
 						} catch (Exception e2) {
-							log.error("Resend FAILED for stock " + sifp.getName() + " " + sifp.getFullName()
+							log.error("Resend FAILED for "+label+" " + sifp.getName() + " " + sifp.getFullName()
 									+ ". Continue next iteration", e2);
 						}
 					} else {
+						log.error("Exception", e);
 						try {
 							App.telegramSendMessage.sendMessage(
-									"Couldn't send message for stock " + sifp.getName() + " " + sifp.getFullName());
+									"Couldn't send message for "+label+" " + sifp.getName() + " " + sifp.getFullName());
 						} catch (Exception e1) {
-							log.error("Couldn't send message about error during sending information about stock "
+							log.error("Couldn't send message about error during sending information about "+label+" "
 									+ sifp.getName() + " " + sifp.getFullName(), e);
 						}
 					}

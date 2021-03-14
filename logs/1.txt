@@ -1,0 +1,150 @@
+2021-02-27 16:44:58
+Full thread dump OpenJDK 64-Bit Server VM (11.0.9+11-LTS mixed mode, sharing):
+
+Threads class SMR info:
+_java_thread_list=0x00007ff400001c60, length=13, elements={
+0x00007ff43404f800, 0x00007ff434051800, 0x00007ff43405c800, 0x00007ff43405f000,
+0x00007ff434061000, 0x00007ff434063000, 0x00007ff43409e000, 0x00007ff4340a7800,
+0x00007ff434312800, 0x00007ff4345e7800, 0x00007ff4345f1800, 0x00007ff434015000,
+0x00007ff400001000
+}
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=24.95ms elapsed=186720.35s tid=0x00007ff43404f800 nid=0xa3b waiting on condition  [0x00007ff41bb65000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@11.0.9/Native Method)
+	at java.lang.ref.Reference.processPendingReferences(java.base@11.0.9/Reference.java:241)
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@11.0.9/Reference.java:213)
+
+"Finalizer" #3 daemon prio=8 os_prio=0 cpu=13.99ms elapsed=186720.35s tid=0x00007ff434051800 nid=0xa3c in Object.wait()  [0x00007ff41ba64000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@11.0.9/Native Method)
+	- waiting on <no object reference available>
+	at java.lang.ref.ReferenceQueue.remove(java.base@11.0.9/ReferenceQueue.java:155)
+	- waiting to re-lock in wait() <0x00000000f5ef8d40> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@11.0.9/ReferenceQueue.java:176)
+	at java.lang.ref.Finalizer$FinalizerThread.run(java.base@11.0.9/Finalizer.java:170)
+
+"Signal Dispatcher" #4 daemon prio=9 os_prio=0 cpu=0.77ms elapsed=186720.34s tid=0x00007ff43405c800 nid=0xa3d runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread0" #5 daemon prio=9 os_prio=0 cpu=22951.67ms elapsed=186720.34s tid=0x00007ff43405f000 nid=0xa3e waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+   No compile task
+
+"C1 CompilerThread0" #6 daemon prio=9 os_prio=0 cpu=8247.45ms elapsed=186720.34s tid=0x00007ff434061000 nid=0xa3f waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+   No compile task
+
+"Sweeper thread" #7 daemon prio=9 os_prio=0 cpu=853.42ms elapsed=186720.34s tid=0x00007ff434063000 nid=0xa40 runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Service Thread" #8 daemon prio=9 os_prio=0 cpu=0.21ms elapsed=186720.26s tid=0x00007ff43409e000 nid=0xa41 runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Common-Cleaner" #9 daemon prio=8 os_prio=0 cpu=562.61ms elapsed=186720.26s tid=0x00007ff4340a7800 nid=0xa43 in Object.wait()  [0x00007ff41b35c000]
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@11.0.9/Native Method)
+	- waiting on <no object reference available>
+	at java.lang.ref.ReferenceQueue.remove(java.base@11.0.9/ReferenceQueue.java:155)
+	- waiting to re-lock in wait() <0x00000000f5ef9530> (a java.lang.ref.ReferenceQueue$Lock)
+	at jdk.internal.ref.CleanerImpl.run(java.base@11.0.9/CleanerImpl.java:148)
+	at java.lang.Thread.run(java.base@11.0.9/Thread.java:834)
+	at jdk.internal.misc.InnocuousThread.run(java.base@11.0.9/InnocuousThread.java:134)
+
+"pool-1-thread-1" #10 prio=5 os_prio=0 cpu=34446.10ms elapsed=186719.25s tid=0x00007ff434312800 nid=0xa45 runnable  [0x00007ff41adff000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(java.base@11.0.9/Native Method)
+	at java.net.SocketInputStream.socketRead(java.base@11.0.9/SocketInputStream.java:115)
+	at java.net.SocketInputStream.read(java.base@11.0.9/SocketInputStream.java:168)
+	at java.net.SocketInputStream.read(java.base@11.0.9/SocketInputStream.java:140)
+	at sun.security.ssl.SSLSocketInputRecord.read(java.base@11.0.9/SSLSocketInputRecord.java:476)
+	at sun.security.ssl.SSLSocketInputRecord.readFully(java.base@11.0.9/SSLSocketInputRecord.java:459)
+	at sun.security.ssl.SSLSocketInputRecord.decodeInputRecord(java.base@11.0.9/SSLSocketInputRecord.java:243)
+	at sun.security.ssl.SSLSocketInputRecord.decode(java.base@11.0.9/SSLSocketInputRecord.java:181)
+	at sun.security.ssl.SSLTransport.decode(java.base@11.0.9/SSLTransport.java:110)
+	at sun.security.ssl.SSLSocketImpl.decode(java.base@11.0.9/SSLSocketImpl.java:1411)
+	at sun.security.ssl.SSLSocketImpl.readApplicationRecord(java.base@11.0.9/SSLSocketImpl.java:1376)
+	at sun.security.ssl.SSLSocketImpl$AppInputStream.read(java.base@11.0.9/SSLSocketImpl.java:963)
+	at java.io.BufferedInputStream.fill(java.base@11.0.9/BufferedInputStream.java:252)
+	at java.io.BufferedInputStream.read1(java.base@11.0.9/BufferedInputStream.java:292)
+	at java.io.BufferedInputStream.read(java.base@11.0.9/BufferedInputStream.java:351)
+	- locked <0x00000000f71053e8> (a java.io.BufferedInputStream)
+	at sun.net.www.http.ChunkedInputStream.fastRead(java.base@11.0.9/ChunkedInputStream.java:244)
+	at sun.net.www.http.ChunkedInputStream.read(java.base@11.0.9/ChunkedInputStream.java:689)
+	- locked <0x00000000f7105620> (a sun.net.www.http.ChunkedInputStream)
+	at java.io.FilterInputStream.read(java.base@11.0.9/FilterInputStream.java:133)
+	at sun.net.www.protocol.http.HttpURLConnection$HttpInputStream.read(java.base@11.0.9/HttpURLConnection.java:3510)
+	at java.util.zip.InflaterInputStream.fill(java.base@11.0.9/InflaterInputStream.java:243)
+	at java.util.zip.InflaterInputStream.read(java.base@11.0.9/InflaterInputStream.java:159)
+	at java.util.zip.GZIPInputStream.read(java.base@11.0.9/GZIPInputStream.java:118)
+	at sun.nio.cs.StreamDecoder.readBytes(java.base@11.0.9/StreamDecoder.java:284)
+	at sun.nio.cs.StreamDecoder.implRead(java.base@11.0.9/StreamDecoder.java:326)
+	at sun.nio.cs.StreamDecoder.read(java.base@11.0.9/StreamDecoder.java:178)
+	- locked <0x00000000f7107708> (a java.io.InputStreamReader)
+	at java.io.InputStreamReader.read(java.base@11.0.9/InputStreamReader.java:185)
+	at java.io.Reader.read(java.base@11.0.9/Reader.java:229)
+	at telegrambot.TelegramBotLib.getURLContent(TelegramBotLib.java:77)
+	- locked <0x00000000f6031990> (a java.lang.Class for telegrambot.TelegramBotLib)
+	at ru.kvaga.investments.stocks.StocksTrackingLib.updateCurrentPricesOfStocks(StocksTrackingLib.java:330)
+	- locked <0x00000000f6034338> (a java.lang.Class for ru.kvaga.investments.stocks.StocksTrackingLib)
+	at ru.kvaga.invest.investbot.jobs.UpdateCurrentPricesOfStocksJob.updateStocks(UpdateCurrentPricesOfStocksJob.java:44)
+	at ru.kvaga.invest.investbot.jobs.UpdateCurrentPricesOfStocksJob.run(UpdateCurrentPricesOfStocksJob.java:54)
+	at java.util.concurrent.Executors$RunnableAdapter.call(java.base@11.0.9/Executors.java:515)
+	at java.util.concurrent.FutureTask.runAndReset(java.base@11.0.9/FutureTask.java:305)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(java.base@11.0.9/ScheduledThreadPoolExecutor.java:305)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@11.0.9/ThreadPoolExecutor.java:1128)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@11.0.9/ThreadPoolExecutor.java:628)
+	at java.lang.Thread.run(java.base@11.0.9/Thread.java:834)
+
+"KvagaNotifyBot Telegram Connection" #14 prio=1 os_prio=0 cpu=15295.18ms elapsed=186716.40s tid=0x00007ff4345e7800 nid=0xa57 runnable  [0x00007ff419bbd000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(java.base@11.0.9/Native Method)
+	at java.net.SocketInputStream.socketRead(java.base@11.0.9/SocketInputStream.java:115)
+	at java.net.SocketInputStream.read(java.base@11.0.9/SocketInputStream.java:168)
+	at java.net.SocketInputStream.read(java.base@11.0.9/SocketInputStream.java:140)
+	at sun.security.ssl.SSLSocketInputRecord.read(java.base@11.0.9/SSLSocketInputRecord.java:476)
+	at sun.security.ssl.SSLSocketInputRecord.readHeader(java.base@11.0.9/SSLSocketInputRecord.java:470)
+	at sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(java.base@11.0.9/SSLSocketInputRecord.java:70)
+	at sun.security.ssl.SSLSocketImpl.readApplicationRecord(java.base@11.0.9/SSLSocketImpl.java:1354)
+	at sun.security.ssl.SSLSocketImpl$AppInputStream.read(java.base@11.0.9/SSLSocketImpl.java:963)
+	at org.apache.http.impl.io.SessionInputBufferImpl.streamRead(SessionInputBufferImpl.java:137)
+	at org.apache.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:153)
+	at org.apache.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:282)
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:138)
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:56)
+	at org.apache.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:259)
+	at org.apache.http.impl.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:163)
+	at org.apache.http.impl.conn.CPoolProxy.receiveResponseHeader(CPoolProxy.java:165)
+	at org.apache.http.protocol.HttpRequestExecutor.doReceiveResponse(HttpRequestExecutor.java:273)
+	at org.apache.http.protocol.HttpRequestExecutor.execute(HttpRequestExecutor.java:125)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:272)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:185)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:111)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:244)
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread$$Lambda$60/0x0000000840186440.getUpdates(Unknown Source)
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:187)
+
+"KvagaNotifyBot Telegram Executor" #15 prio=1 os_prio=0 cpu=842.09ms elapsed=186716.40s tid=0x00007ff4345f1800 nid=0xa58 in Object.wait()  [0x00007ff419abd000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@11.0.9/Native Method)
+	- waiting on <no object reference available>
+	at java.lang.Object.wait(java.base@11.0.9/Object.java:328)
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:299)
+	- waiting to re-lock in wait() <0x00000000f643abd0> (a java.util.concurrent.ConcurrentLinkedDeque)
+
+"DestroyJavaVM" #16 prio=5 os_prio=0 cpu=1097.67ms elapsed=186716.40s tid=0x00007ff434015000 nid=0xa39 waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Attach Listener" #404 daemon prio=9 os_prio=0 cpu=0.56ms elapsed=70.34s tid=0x00007ff400001000 nid=0x432f waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"VM Thread" os_prio=0 cpu=21018.31ms elapsed=186720.45s tid=0x00007ff43404c800 nid=0xa3a runnable  
+
+"VM Periodic Task Thread" os_prio=0 cpu=92423.79ms elapsed=186720.36s tid=0x00007ff4340a0800 nid=0xa42 waiting on condition  
+
+JNI global refs: 16, weak refs: 0
+

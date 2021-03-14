@@ -34,7 +34,7 @@ import telegrambot.InvestBotException.UserNotFoundException;
 // https://habr.com/ru/post/476306/
 
 public class InvestBot extends TelegramLongPollingBot {
-	private static final Logger log = Logger.getLogger(_Bot.class);
+	private static final Logger log = Logger.getLogger(InvestBot.class);
 	private static int count = 0;
 	final int RECONNECT_PAUSE = 10000;
 
@@ -63,7 +63,7 @@ public class InvestBot extends TelegramLongPollingBot {
 	}
 
 	
-	private void simpleReply(Update update, String text) {
+	public void simpleReply(Update update, String text) {
 		try {
 			Long chatId = 1L;
 			if (update.hasCallbackQuery()) {
@@ -86,14 +86,14 @@ public class InvestBot extends TelegramLongPollingBot {
 	
 
 
-	public void scenarioAddStockToWatchList(Update update, User user) throws UserIncorrectStateException, StocksTrackingException {
+	public void scenarioAddStockToWatchList(Update update, User user, String URL_TEXT_TINKOFF, File dataFile) throws UserIncorrectStateException, StocksTrackingException {
 		String url="";
-		String URL_TEXT_TINKOFF="https://www.tinkoff.ru/invest/stocks/%s/";
+		//String URL_TEXT_TINKOFF="https://www.tinkoff.ru/invest/stocks/%s/";
 
 //		simpleReply(update, "<a href=\"https://www.tinkoff.ru/invest/stocks/NFLX/\">NFLX</a>: 123");
 
 		//  Получаем тикер
-		if (user.getState() == User.STATE_WAIT_FOR_STOCK_TICKER) {
+		if (user.getState() == User.STATE_WAIT_FOR_TICKER) {
 			if(user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST()==null) {
 				ObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST objectForSCENARIO_ADD_STOCK_TO_WATCHLIST = new ObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST();
 				user.setObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST(objectForSCENARIO_ADD_STOCK_TO_WATCHLIST);
@@ -123,10 +123,24 @@ public class InvestBot extends TelegramLongPollingBot {
 //					simpleReply(update, "Тикер ["+update.getMessage().getText()+"] не найден на биржах. Проверьте корректность написания тикера и пришлите повторно");
 //					return;
 //				}
+				
 				url=String.format(URL_TEXT_TINKOFF, user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker());
-				user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST()
-				.setStockName(TelegramBotLib.getFullNameOfStock(TelegramBotLib.getURLContent(url), user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker(), url));
-			} catch (Exception e) {
+				String ticker=user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker();
+				if(user.getScenario()==User.SCENARIO_ADD_STOCK_TO_WATCHLIST) {
+					
+					user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST()
+					.setStockName(StocksTrackingLib.getFullNameOfStock(TelegramBotLib.getURLContent(url), ticker, url,String.format(ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS,ticker)));
+				}else if(user.getScenario()==User.SCENARIO_ADD_FUND_TO_WATCHLIST) {
+
+					user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST()
+					.setStockName(StocksTrackingLib.getFullNameOfStock(TelegramBotLib.getURLContent(url), ticker, url,String.format(ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_ETFS,ticker)));
+				}else if(user.getScenario()==User.SCENARIO_ADD_BOND_TO_WATCHLIST) {
+
+					user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST()
+					.setStockName(StocksTrackingLib.getFullNameOfStock(TelegramBotLib.getURLContent(url), ticker, url,String.format(ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_BONDS,ticker)));
+				}
+
+				} catch (Exception e) {
 				simpleReply(update, "Тикер ["+user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker()+"] не найден на биржах. Проверьте корректность написания тикера и пришлите повторно");
 				log.error("", e);				
 				return;
@@ -152,7 +166,7 @@ public class InvestBot extends TelegramLongPollingBot {
 					watchPrice = user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getWatchPrice();
 				}
 				user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().setWatchPrice(watchPrice);
-				File dataFile = new File(App.DATA_FILE);
+				//File dataFile = new File(App.DATA_FILE);
 				
 				// Check and find already existed stock item in the data file
 				stockItem = StocksTrackingLib.getStockItemByTickerFromFile(user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker(),  dataFile);
@@ -201,14 +215,22 @@ public class InvestBot extends TelegramLongPollingBot {
 			}
 			try {
 				if(stockItem!=null) {
-					simpleReply(update, String.format("Для акции [%s:%s] установлена новая цена отслеживания %s вместо прежней %s",user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockName(),user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker(), ""+user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getWatchPrice(), stockItem.getTraceablePrice()));
+					simpleReply(update, String.format("Для актива [%s:%s] установлена новая цена отслеживания %s вместо прежней %s",user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockName(),user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker(), ""+user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getWatchPrice(), stockItem.getTraceablePrice()));
 				}else {
-					simpleReply(update, String.format("Для акции [%s:%s] установлена цена отслеживания %s",user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockName(),user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker(), ""+user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getWatchPrice()));
+					simpleReply(update, String.format("Для актива [%s:%s] установлена цена отслеживания %s",user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockName(),user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker(), ""+user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getWatchPrice()));
 				}
+//				if(stockItem!=null) {
+//					App.telegramSendMessage.sendMessage( String.format("Для актива [%s:%s] установлена новая цена отслеживания %s вместо прежней %s",user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockName(),user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker(), ""+user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getWatchPrice(), stockItem.getTraceablePrice()));
+//				}else {
+//					App.telegramSendMessage.sendMessage( String.format("Для актива [%s:%s] установлена цена отслеживания %s",user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockName(),user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getStockTiker(), ""+user.getObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST().getWatchPrice()));
+//				}
 //                 execute(sendIKMenuOfAllowedOperations(update.getMessage().getChatId()));
-				log.debug("Отправляем актуальный список акций и цен отслеживаний");
+				log.debug("Отправляем актуальный список активов и цен отслеживаний");
 				simpleReply(update, sb.toString());
-			} finally {
+			}catch(Exception e) {
+				log.error("Exception", e);
+			}finally {
+			
 				user.setState(User.STATE_IDLE);
 				try {
 					user.setScenario(User.SCENARIO_NONE);
@@ -237,6 +259,7 @@ public class InvestBot extends TelegramLongPollingBot {
 	}
 	
 	public void onUpdateReceived(Update update) {
+		
 //		simpleReply(update, "<a href=\"https://www.tinkoff.ru/invest/stocks/NFLX/\">NFLX</a>: 123\n"
 //				+ "<a href=\"https://www.tinkoff.ru/invest/stocks/SBER/\">SBER</a>: 123");
 
@@ -249,6 +272,46 @@ public class InvestBot extends TelegramLongPollingBot {
 		if(user==null) {
 			simpleReply(update, "User ["+userName+"] is not registered");
 			return;
+		}
+		if(update.getMessage()!=null && update.getMessage().getText().equals("/addstock")) {
+			try {
+				user.setScenario(User.SCENARIO_ADD_STOCK_TO_WATCHLIST);
+				user.setState(user.STATE_WAIT_FOR_TICKER);
+				simpleReply(update, "Введите тикер и цену через пробел");
+				return;
+			} catch (UserIncorrectScenarioException e) {
+				log.error("Couldn't set scenario [SCENARIO_ADD_STOCK_TO_WATCHLIST] for user ["+user.getUserName()+"]");
+				return;
+			} catch (UserIncorrectStateException e) {
+				log.error("Couldn't set state [STATE_WAIT_FOR_TICKER] for user ["+user.getUserName()+"]");
+				return;
+			}
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/addbond")) {
+			try {
+				user.setScenario(User.SCENARIO_ADD_BOND_TO_WATCHLIST);
+				user.setState(user.STATE_WAIT_FOR_TICKER);
+				simpleReply(update, "Введите тикер и цену через пробел");
+				return;
+			} catch (UserIncorrectScenarioException e) {
+				log.error("Couldn't set scenario [SCENARIO_ADD_BOND_TO_WATCHLIST] for user ["+user.getUserName()+"]");
+				return;
+			} catch (UserIncorrectStateException e) {
+				log.error("Couldn't set state [STATE_WAIT_FOR_TICKER] for user ["+user.getUserName()+"]");
+				return;
+			}
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/addetf")) {
+			try {
+				user.setScenario(User.SCENARIO_ADD_FUND_TO_WATCHLIST);
+				user.setState(user.STATE_WAIT_FOR_TICKER);
+				simpleReply(update, "Введите тикер и цену через пробел");
+				return;
+			} catch (UserIncorrectScenarioException e) {
+				log.error("Couldn't set scenario [SCENARIO_ADD_FUND_TO_WATCHLIST] for user ["+user.getUserName()+"]");
+				return;
+			} catch (UserIncorrectStateException e) {
+				log.error("Couldn't set state [STATE_WAIT_FOR_TICKER] for user ["+user.getUserName()+"]");
+				return;
+			}
 		}
 		
 		log.debug("User="+user+", userName="+userName+", user.scenario="+User.getScenarionNAmeById(user.getScenario()) + ", state="+User.getStateNameById(user.getState()));
@@ -267,9 +330,9 @@ public class InvestBot extends TelegramLongPollingBot {
 							log.debug("Зашли в блок STATE_WAIT_FOR_CHOICE_OF_OPERATION");
 							log.debug("update.hasCallbackQuery()="+update.hasCallbackQuery() + ", update.getCallbackQuery().getData()='"+update.getCallbackQuery().getData()+"'");
 							if (update.hasCallbackQuery()) {
-								log.debug("User.SCENARIO_ADD_STOCK_TO_WATCHLIST='"+User.SCENARIO_ADD_STOCK_TO_WATCHLIST+"'");
 //								try {
 									if (update.getCallbackQuery().getData().equals(""+User.SCENARIO_ADD_STOCK_TO_WATCHLIST)) {
+										log.debug("User.SCENARIO_ADD_STOCK_TO_WATCHLIST='"+User.SCENARIO_ADD_STOCK_TO_WATCHLIST+"'");
 
 										log.debug("Сценарий добавления акции активирован");
 //										execute(new SendMessage().setText(update.getCallbackQuery().getData())
@@ -281,11 +344,35 @@ public class InvestBot extends TelegramLongPollingBot {
 											log.error("Exception", e);
 										}
 										simpleReply(update, "Укажите просто тикер акции либо тикер и цену отслеживания через пробел");
-										user.setState(User.STATE_WAIT_FOR_STOCK_TICKER);
+										user.setState(User.STATE_WAIT_FOR_TICKER);
 //										scenarioAddStockToWatchList(update, user);
 										return;
-									}else if(false) {
-										// other scenarios
+									}else if (update.getCallbackQuery().getData().equals(""+User.SCENARIO_ADD_FUND_TO_WATCHLIST)) {
+										log.debug("User.SCENARIO_ADD_FUND_TO_WATCHLIST='"+User.SCENARIO_ADD_FUND_TO_WATCHLIST+"'");
+										log.debug("Сценарий добавления фонда активирован");
+										try {
+											user.setScenario(User.SCENARIO_ADD_FUND_TO_WATCHLIST);
+										} catch (UserIncorrectScenarioException e) {
+											// TODO Auto-generated catch block
+											log.error("Exception", e);
+										}
+										simpleReply(update, "Укажите просто тикер фонда либо тикер и цену отслеживания через пробел");
+										user.setState(User.STATE_WAIT_FOR_TICKER);
+//										scenarioAddStockToWatchList(update, user);
+										return;
+									}else if (update.getCallbackQuery().getData().equals(""+User.SCENARIO_ADD_BOND_TO_WATCHLIST)) {
+											log.debug("User.SCENARIO_ADD_BOND_TO_WATCHLIST='"+User.SCENARIO_ADD_BOND_TO_WATCHLIST+"'");
+											log.debug("Сценарий добавления облигации активирован");
+											try {
+												user.setScenario(User.SCENARIO_ADD_BOND_TO_WATCHLIST);
+											} catch (UserIncorrectScenarioException e) {
+												// TODO Auto-generated catch block
+												log.error("Exception", e);
+											}
+											simpleReply(update, "Укажите просто тикер облигации либо тикер и цену отслеживания через пробел");
+											user.setState(User.STATE_WAIT_FOR_TICKER);
+//											scenarioAddStockToWatchList(update, user);
+											return;
 									}else {
 										log.error("incorrect scenario exception");
 									}
@@ -294,7 +381,7 @@ public class InvestBot extends TelegramLongPollingBot {
 //									log.error("Exception", e);;
 //								}
 							}else {
-							// some code
+								
 							}
 						}
 				} catch (TelegramApiException e) {
@@ -306,7 +393,25 @@ public class InvestBot extends TelegramLongPollingBot {
 			case User.SCENARIO_ADD_STOCK_TO_WATCHLIST:
 				log.debug("SCENARIO_ADD_STOCK_TO_WATCHLIST");
 				try {
-					scenarioAddStockToWatchList(update, user);
+					scenarioAddStockToWatchList(update, user, ConfigMap.URL_TEXT_TINKOFF_STOCKS,  new File(App.DATA_FILE_STOCKS));
+				} catch (UserIncorrectStateException | StocksTrackingException e1) {
+					simpleReply(update, "Попробуйте еще раз");
+					log.error("Exception", e1);;
+				} 
+				return;
+			case User.SCENARIO_ADD_FUND_TO_WATCHLIST:
+				log.debug("SCENARIO_ADD_FUND_TO_WATCHLIST");
+				try {
+					scenarioAddStockToWatchList(update, user, ConfigMap.URL_TEXT_TINKOFF_ETFS,  new File(App.DATA_FILE_ETFS));
+				} catch (UserIncorrectStateException | StocksTrackingException e1) {
+					simpleReply(update, "Попробуйте еще раз");
+					log.error("Exception", e1);;
+				} 
+				return;
+			case User.SCENARIO_ADD_BOND_TO_WATCHLIST:
+				log.debug("SCENARIO_ADD_BOND_TO_WATCHLIST");
+				try {
+					scenarioAddStockToWatchList(update, user, ConfigMap.URL_TEXT_TINKOFF_BONDS,  new File(App.DATA_FILE_BONDS));
 				} catch (UserIncorrectStateException | StocksTrackingException e1) {
 					simpleReply(update, "Попробуйте еще раз");
 					log.error("Exception", e1);;
@@ -332,15 +437,21 @@ public class InvestBot extends TelegramLongPollingBot {
 		InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 		InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
 		InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+		InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+
 		inlineKeyboardButton1.setText("Добавить акцию к отслеживанию");
 		inlineKeyboardButton1.setCallbackData(""+User.SCENARIO_ADD_STOCK_TO_WATCHLIST);
-		inlineKeyboardButton2.setText("Тык2");
-		inlineKeyboardButton2.setCallbackData("Button \"Тык2\" has been pressed");
+		inlineKeyboardButton2.setText("Добавить фонд к отслеживанию");
+		inlineKeyboardButton2.setCallbackData(""+User.SCENARIO_ADD_FUND_TO_WATCHLIST);
+		inlineKeyboardButton3.setText("Добавить облигацию к отслеживанию");
+		inlineKeyboardButton3.setCallbackData(""+User.SCENARIO_ADD_BOND_TO_WATCHLIST);
 		List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<InlineKeyboardButton>();
 		List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<InlineKeyboardButton>();
 		keyboardButtonsRow1.add(inlineKeyboardButton1);
-		keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Fi4a").setCallbackData("CallFi4a"));
-		keyboardButtonsRow2.add(inlineKeyboardButton2);
+		keyboardButtonsRow1.add(inlineKeyboardButton2);
+
+//		keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Fi4a").setCallbackData("CallFi4a"));
+		keyboardButtonsRow2.add(inlineKeyboardButton3);
 		List<List<InlineKeyboardButton>> rowList = new ArrayList<List<InlineKeyboardButton>>();
 		rowList.add(keyboardButtonsRow1);
 		rowList.add(keyboardButtonsRow2);

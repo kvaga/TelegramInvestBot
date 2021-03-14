@@ -25,23 +25,29 @@ import ru.kvaga.investments.stocks.StocksTrackingLib;
 //import ru.kvaga.rss.feedaggr.objects.utils.ObjectsUtils;
 //import ru.kvaga.rss.feedaggrwebserver.objects.user.User;
 //import ru.kvaga.rss.feedaggrwebserver.objects.user.UserFeed;
+import telegrambot.ConfigMap;
 
 public class UpdateCurrentPricesOfStocksJob implements Runnable {
 	final static Logger log = LogManager.getLogger(UpdateCurrentPricesOfStocksJob.class);
-	private static String urlTextTinkoff = "https://www.tinkoff.ru/invest/stocks/%s/";
-	private File listOfStocksFile;
+	private String urlTextTinkoff = null;
+	private File listOfStocksFile = null;
+	private String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME;
+	private String label;
 
-	public UpdateCurrentPricesOfStocksJob(File listOfStocksFile) {
+	public UpdateCurrentPricesOfStocksJob(String label, File listOfStocksFile, String urlTextTinkoff, String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME) {
 		if (listOfStocksFile == null) {
 			throw new RuntimeException("List of stocks file can't be null");
 		}
 		this.listOfStocksFile = listOfStocksFile;
+		this.urlTextTinkoff=urlTextTinkoff;
+		this.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME=REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME;
+		this.label=label;
 	}
 
 	void updateStocks() {
 		try {
 			log.debug("listOfStocksFile=" + listOfStocksFile);
-			StocksTrackingLib.updateCurrentPricesOfStocks(urlTextTinkoff, listOfStocksFile);
+			StocksTrackingLib.updateCurrentPricesOfStocks(label, urlTextTinkoff, listOfStocksFile, REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME);
 		} catch (Exception e) {
 			log.error("Exception", e);
 		}
