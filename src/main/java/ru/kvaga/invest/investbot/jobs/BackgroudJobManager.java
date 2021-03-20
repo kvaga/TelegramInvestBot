@@ -17,6 +17,7 @@ public class BackgroudJobManager {
 	private static ScheduledExecutorService schedulerStocks;
 	private static ScheduledExecutorService schedulerBonds;
 	private static ScheduledExecutorService schedulerETFs;
+	private static ScheduledExecutorService schedulerBondsProfitability;
 
 	final static Logger log = LogManager.getLogger(BackgroudJobManager.class);
 
@@ -25,8 +26,12 @@ public class BackgroudJobManager {
 		schedulerStocks = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("stocks-job-%d").build());
 		schedulerETFs = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("etfs-job-%d").build());
 		schedulerBonds = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("bonds-job-%d").build());
+		schedulerBondsProfitability = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("bondsprofitability-job-%d").build());
 
 //		scheduler.scheduleAtFixedRate(new UpdateCurrentPricesOfStocksJob(listOfStocksFile), 0, 60, TimeUnit.SECONDS);
+		
+		schedulerBondsProfitability.scheduleAtFixedRate(new UpdateProfitabilityOfBonds(), 0, 24, TimeUnit.HOURS);
+		log.info("BackgroudJobManager started with jobs [UpdateProfitabilityOfBonds for each 24 hours]");
 		
 		schedulerStocks.scheduleAtFixedRate(new UpdateCurrentPricesOfStocksJob("Stock",listOfStocksFile, ConfigMap.URL_TEXT_TINKOFF_STOCKS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS), 0, 4, TimeUnit.HOURS);
 		log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfStocksJob for each 4 hours]");

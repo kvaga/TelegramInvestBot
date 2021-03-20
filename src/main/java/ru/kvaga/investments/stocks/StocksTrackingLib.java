@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import ru.kvaga.investments.bonds.BondItemForPrinting;
+import ru.kvaga.investments.bonds.BondsTrackingLib;
 import ru.kvaga.investments.stocks.StocksTrackingException.GetContentOFSiteException;
 import ru.kvaga.investments.stocks.StocksTrackingException.StoreDataException;
 import ru.kvaga.telegram.sendmessage.TelegramSendMessage;
@@ -343,10 +345,17 @@ public class StocksTrackingLib {
 								+ si.getTraceablePrice() + ", lastPrice: " + si.getLastPrice() + "]");
 
 						if (si.getTraceablePrice() > currentPrice) {
-							stockItemsForPrinting.add(new StockItemForPrinting(si.getName(), fullName,
+							if(label.equals("Bond")) {
+								stockItemsForPrinting.add((StockItemForPrinting)new BondItemForPrinting(si.getName(), fullName,
+										si.getTraceablePrice(), si.getLastPrice(), currentPrice,
+										currentPrice * 100.0 / si.getTraceablePrice() - 100,
+										currentPrice * 100.0 / si.getLastPrice() - 100,BondsTrackingLib.bondProfitability(BondsTrackingLib.getInfoFromHTMLForCalculationProfitability(response), currentPrice)));
+							}else {
+								stockItemsForPrinting.add(new StockItemForPrinting(si.getName(), fullName,
 									si.getTraceablePrice(), si.getLastPrice(), currentPrice,
 									currentPrice * 100.0 / si.getTraceablePrice() - 100,
 									currentPrice * 100.0 / si.getLastPrice() - 100));
+							}
 							/*
 							 * App.telegramSendMessage.sendMessage(
 							 * "Stock: <a href='https://tinkoff.ru/invest/stocks/"+si.getName()+"/'>"+si.
@@ -409,7 +418,8 @@ public class StocksTrackingLib {
 				 * String.format("%.2f",sifp.getPercentFromLastPrice()) +"% from Last Price)" +
 				 * TelegramSendMessage.LINEBREAK + TelegramSendMessage.LINEBREAK );
 				 */
-				String message = label+": <a href='" + String.format(URL_TEXT_TINKOFF, sifp.getName()) + "'>"
+				
+					String message = label+": <a href='" + String.format(URL_TEXT_TINKOFF, sifp.getName()) + "'>"
 						+ sifp.getName() + "</a> " + URLEncoder.encode(sifp.getFullName(),StandardCharsets.UTF_8.toString()) + TelegramSendMessage.LINEBREAK
 						+ String.format("Tracking Price: %.2f", sifp.getTraceablePrice())
 						+ TelegramSendMessage.LINEBREAK + String.format("Last Price: %.2f", sifp.getLastPrice())
@@ -417,6 +427,10 @@ public class StocksTrackingLib {
 						+ TelegramSendMessage.LINEBREAK + "("
 						+ String.format("%.2f", sifp.getPercentFromTrackingPrice()) + "% from Tracking Price, " + "("
 						+ String.format("%.2f", sifp.getPercentFromLastPrice()) + "% from Last Price)";
+					if(label.equals("Bond")) {
+						BondItemForPrinting bifp = (BondItemForPrinting) sifp;
+						message = message + TelegramSendMessage.LINEBREAK + String.format("Profitability: %.2f", bifp.getProfitability())+"%";
+					}
 				log.debug("Message:\n" + message);
 				try {
 //					App.telegramSendMessage.sendMessage(URLEncoder.encode(message,StandardCharsets.UTF_8.toString()));
