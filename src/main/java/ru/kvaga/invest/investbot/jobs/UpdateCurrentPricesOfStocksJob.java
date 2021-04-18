@@ -34,6 +34,19 @@ public class UpdateCurrentPricesOfStocksJob implements Runnable {
 	private String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME;
 	private String label;
 
+	private boolean forcedBol = false;
+
+	public UpdateCurrentPricesOfStocksJob(boolean forced, String label, File listOfStocksFile, String urlTextTinkoff, String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME) {
+		this.forcedBol = forced;
+		if (listOfStocksFile == null) {
+			throw new RuntimeException("List of stocks file can't be null");
+		}
+		this.listOfStocksFile = listOfStocksFile;
+		this.urlTextTinkoff=urlTextTinkoff;
+		this.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME=REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME;
+		this.label=label;
+	}
+	
 	public UpdateCurrentPricesOfStocksJob(String label, File listOfStocksFile, String urlTextTinkoff, String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME) {
 		if (listOfStocksFile == null) {
 			throw new RuntimeException("List of stocks file can't be null");
@@ -54,8 +67,14 @@ public class UpdateCurrentPricesOfStocksJob implements Runnable {
 	}
 
 	public void run() {
+		
 		log.info("Try to start Job ");
-
+		if (!forcedBol) {
+			if (!ConfigMap.jobsEnabledBol) {
+				log.info("Jobs disabled by user. Finished.");
+				return;
+			}
+		}
 		try {
 			updateStocks();
 			log.debug("Job finished");

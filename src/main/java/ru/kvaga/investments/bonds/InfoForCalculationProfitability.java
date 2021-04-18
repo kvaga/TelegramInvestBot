@@ -3,13 +3,13 @@ package ru.kvaga.investments.bonds;
 import java.util.Date;
 
 public class InfoForCalculationProfitability {
-	float currentProfitability=Float.MIN_VALUE;
-	float profitabilityToEnd=Float.MIN_VALUE;
+	float currentProfitability=-321;
+	float profitabilityToEnd=-321;
 	Date dateOfEnd=null;
 	Date dateOfNextCoupon=null;
-	float nkd;
-	float coupon=Float.MIN_VALUE;
-	float nominal=Float.MIN_VALUE;
-	int period=Integer.MIN_VALUE;
+	float nkd=-321;
+	float coupon=-321;
+	float nominal=-321;
+	int period=-321;
 	boolean amortization=true;
 }

@@ -53,20 +53,22 @@ public class BondsTrackingLib {
 	public static String MOEX_BONDIZATION_URL_PATTERN = "https://iss.moex.com/iss/securities/%s/bondization.xml";
 
 	public static void main(String args[]) throws Exception {
-		String urlOfForeignBondsList="https://www.tinkoff.ru/invest/bonds/?country=Foreign&orderType=Desc&sortType=ByYieldToClient&start=0&end=220";
+//		String urlOfForeignBondsList="https://www.tinkoff.ru/invest/bonds/?country=Foreign&orderType=Desc&sortType=ByYieldToClient&start=0&end=220";
 		
-		getListOfBondsFromURL(urlOfForeignBondsList);
+//		getListOfBondsFromURL(urlOfForeignBondsList);
 		
 //		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		
-//		String htmlContent = TelegramBotLib.getURLContent(
+		String htmlContent = TelegramBotLib.getURLContent(
 //				"https://www.tinkoff.ru/invest/bonds/XS0191754729/" // Dollar
 //				"https://www.tinkoff.ru/invest/bonds/RU000A0ZZ0L6/" // RUB
 //				"https://www.tinkoff.ru/invest/bonds/EGPT0431/"     // Euro
 //				"https://www.tinkoff.ru/invest/bonds/VTBperp/"      // Euro call option
-//				);
+				"https://www.tinkoff.ru/invest/bonds/XS0088543193/" // RUB 
+		
+				);
 		//StocksTrackingLib.getFullNameOfStock(response, stockName, urlText, REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME)
-//		System.out.println(bondProfitability(getInfoFromHTMLForCalculationProfitability(htmlContent), StocksTrackingLib.getCurrentPriceOfStock("", htmlContent, "")));
+		System.out.println(bondProfitability(getInfoFromHTMLForCalculationProfitability(htmlContent), StocksTrackingLib.getCurrentPriceOfStock("", htmlContent, "")));
 		
 		;
 	}
@@ -129,10 +131,12 @@ public class BondsTrackingLib {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		String splitDivider="<div role=\"rowheader\" class=\"DetailsTableItem__";
 		Pattern patternCurrentProfitability = Pattern.compile("Текущая доходность<!-- -->.*data-qa-type=\"uikit\\/money\">(?<currentProfitability>.*)<\\/span>");
-		Pattern patternProfitabilityToEnd = Pattern.compile("(Доходность к погашению|Доходность к колл-опциону)<!-- -->.*data-qa-type=\"uikit\\/money\">(?<profitabilityToEnd>.*)<\\/span>");
-		Pattern patternDateOfEnd = Pattern.compile("(Дата погашения облигации|Дата колл-опциона)<!-- -->.*data-qa-file=\"DetailsTableItem\">(?<dateOfEnd>.*)<\\/div><\\/div><\\/div>");
+		Pattern patternProfitabilityToEnd = Pattern.compile("(Доходность к погашению|Доходность к колл-опциону|Доходность к оферте)<!-- -->.*data-qa-type=\"uikit\\/money\">(?<profitabilityToEnd>.*)<\\/span>");
+		Pattern patternDateOfEnd = Pattern.compile("(Дата погашения облигации|Дата колл-опциона|Дата оферты)<!-- -->.*data-qa-file=\"DetailsTableItem\">(?<dateOfEnd>.*)<\\/div><\\/div><\\/div>");
 		Pattern patternDateOfNextCoupon = Pattern.compile("Дата выплаты купона<!-- -->.*data-qa-file=\"DetailsTableItem\">(?<dateOfNextCoupon>.*)<\\/div><\\/div><\\/div>");
 		Pattern patternNkd = Pattern.compile("Накопленный купонный доход.*data-qa-type=\"uikit\\/money\">(?<nkd>.*)<\\/div><\\/div><\\/div><\\/div><\\/div>");
+//		Pattern patternNkd = Pattern.compile("Накопленный купонный доход.*data-qa-type=\"uikit\\/money\">(?<nkd>.*)<\\/div><\\/div><\\/div><\\/div>");
+
 		Pattern patternCoupon = Pattern.compile("Величина купона.*data-qa-type=\"uikit\\/money\">(?<coupon>.*)<\\/span><\\/span>");
 		Pattern patternNominal = Pattern.compile("Номинал.*data-qa-type=\"uikit\\/money\">(?<nominal>.*)</div><\\/div><\\/div><\\/div>");
 		Pattern patternPeriod = Pattern.compile("Периодичность выплаты купона.*data-qa-file=\"DetailsTableItem\">(?<period>.*)<\\/div><\\/div><\\/div>");
@@ -203,7 +207,7 @@ public class BondsTrackingLib {
 								+ "coupon=["+info.coupon+"],"
 								+ "nominal=["+info.nominal+"],"
 								+ "period=["+info.period+"],"
-								+ "amortization=["+info.amortization+"]");
+								+ "amortization=["+info.amortization+"]. Row ["+row+"]");
 			}
 			
 		}
@@ -211,17 +215,18 @@ public class BondsTrackingLib {
 	}
 	
 	public static synchronized float bondProfitability(InfoForCalculationProfitability info, double currentPrice) throws ParseException {
-		return bondProfitability(info.dateOfEnd, info.dateOfNextCoupon, info.nkd, info.coupon, info.period, info.nominal, info.amortization, info.currentProfitability);
+		return (float) bondProfitability(info.dateOfEnd, info.dateOfNextCoupon, info.nkd, info.coupon, info.period, info.nominal, info.amortization, currentPrice);
 	}
-	public static synchronized float bondProfitability(Date dateOfBondEnd, Date dateOfNextCoupon, float nkd, float coupon, int period, float nominal, boolean amortization, float currentPrice) throws ParseException {
+	public static synchronized double bondProfitability(Date dateOfBondEnd, Date dateOfNextCoupon, float nkd, float coupon, int period, float nominal, boolean amortization, double currentPrice) throws ParseException {
 		//if(amortization) throw new UnsupportedOperationException("Unsupported amortization exception ["+amortization+"]");
+//		System.out.println("currentPrice: " + currentPrice);
 		int countOfCouponsBeforeBondEnd=countOfCouponsBeforeBondEnd(dateOfNextCoupon, dateOfBondEnd, period);
 //		System.out.println("Count of coupons before end: " + countOfCouponsBeforeBondEnd);
 		float countOfYearsBeforeBondEnd=countOfYearsBeforeBondEnd(dateOfBondEnd);
 //		System.out.println("Count of years before end: " + countOfYearsBeforeBondEnd);
 		
-		float profitability = ((nominal - currentPrice - nkd + countOfCouponsBeforeBondEnd*coupon)/nominal*100 - 100)/countOfYearsBeforeBondEnd;
-//		System.out.println("profitability: " + x);
+		double profitability = ((nominal - currentPrice - nkd + countOfCouponsBeforeBondEnd*coupon)/nominal*100)/countOfYearsBeforeBondEnd;
+//		System.out.println("profitability: " + profitability);
 		
 //		float profitability=(nominal - currentPrice - nkd + countOfCouponsBeforeBondEnd*coupon)/countOfYearsBeforeBondEnd/nominal*100;
 //		System.out.println("profitability: " + profitability);

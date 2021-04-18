@@ -18,6 +18,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 import com.google.common.base.Ticker;
 
+import ru.kvaga.invest.investbot.jobs.UpdateCurrentPricesOfStocksJob;
+import ru.kvaga.invest.investbot.jobs.UpdateProfitabilityOfBonds;
 import ru.kvaga.investments.stocks.StockItem;
 import ru.kvaga.investments.stocks.StockItemComparatorByTicker;
 import ru.kvaga.investments.stocks.StocksTrackingException;
@@ -258,6 +260,24 @@ public class InvestBot extends TelegramLongPollingBot {
 
 	}
 	
+	public void sendListOfTrackingItemsFromFile(String urlTinkoff, File dataFile, Update update) {
+		ArrayList<StockItem> al;
+		try {
+			al = StocksTrackingLib.getListOfStocksFromFile(dataFile);
+			StringBuilder sb = new StringBuilder();
+			sb.append("Текущий список активов с ценами отслеживания\n");
+			Collections.sort(al, new StockItemComparatorByTicker());
+			for (StockItem si : al) {
+				sb.append("<a href=\"" + String.format(urlTinkoff, si.getName()) + "\">" + si.getName() + "</a>: "
+						+ si.getTraceablePrice() + "\n");
+			}
+			sb.append("\n");
+			log.debug("Отправляем актуальный список активов и цен отслеживаний");
+			simpleReply(update, sb.toString());
+		} catch (StocksTrackingException e) {
+			log.error("Couldn't send list of tracking items from file ["+dataFile+"] and url ["+urlTinkoff+"]", e);
+		}
+	}
 	public void onUpdateReceived(Update update) {
 		
 //		simpleReply(update, "<a href=\"https://www.tinkoff.ru/invest/stocks/NFLX/\">NFLX</a>: 123\n"
@@ -312,6 +332,38 @@ public class InvestBot extends TelegramLongPollingBot {
 				log.error("Couldn't set state [STATE_WAIT_FOR_TICKER] for user ["+user.getUserName()+"]");
 				return;
 			}
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/listetf")) {
+			sendListOfTrackingItemsFromFile(ConfigMap.URL_TEXT_TINKOFF_ETFS, new File(App.DATA_FILE_ETFS), update);
+			return;
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/liststocks")) {
+			sendListOfTrackingItemsFromFile(ConfigMap.URL_TEXT_TINKOFF_STOCKS, new File(App.DATA_FILE_STOCKS), update);
+			return;
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/listbonds")) {
+			sendListOfTrackingItemsFromFile(ConfigMap.URL_TEXT_TINKOFF_BONDS, new File(App.DATA_FILE_BONDS), update);
+			return;
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/disableenablejobs")) {
+			if(ConfigMap.jobsEnabledBol) {
+				ConfigMap.jobsEnabledBol=false;
+				log.debug("User disabled jobs");
+				simpleReply(update, "Jobs disabled");
+			}else {
+				ConfigMap.jobsEnabledBol=true;
+				log.debug("User enabled jobs");
+				simpleReply(update, "Jobs enabled");
+			}
+			return;
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/getbondsprofitability")) {
+			new Thread(new UpdateProfitabilityOfBonds(true)).start();
+			return;
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/getstocksprices")) {
+			new Thread(new UpdateCurrentPricesOfStocksJob(true, "Stock",new File(App.DATA_FILE_STOCKS), ConfigMap.URL_TEXT_TINKOFF_STOCKS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS)).start();
+			return;
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/getbondsprices")) {
+			new Thread(new UpdateCurrentPricesOfStocksJob(true, "Bond",new File(App.DATA_FILE_BONDS), ConfigMap.URL_TEXT_TINKOFF_BONDS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_BONDS)).start();
+			return;
+		}else if(update.getMessage()!=null && update.getMessage().getText().equals("/getetfprices")) {
+			new Thread(new UpdateCurrentPricesOfStocksJob(true, "ETF",new File(App.DATA_FILE_ETFS), ConfigMap.URL_TEXT_TINKOFF_ETFS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_ETFS)).start();
+			return;
 		}
 		
 		log.debug("User="+user+", userName="+userName+", user.scenario="+User.getScenarionNAmeById(user.getScenario()) + ", state="+User.getStateNameById(user.getState()));
@@ -421,7 +473,7 @@ public class InvestBot extends TelegramLongPollingBot {
 				try {
 					throw new InvestBotException.UserIncorrectScenarioException(user.getScenario());
 				} catch (UserIncorrectScenarioException e) {
-					e.printStackTrace();
+					log.error("", e);
 				}
 		}
 
