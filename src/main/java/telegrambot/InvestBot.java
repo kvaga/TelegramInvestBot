@@ -76,7 +76,7 @@ public class InvestBot extends TelegramLongPollingBot {
 				chatId = update.getMessage().getChatId();
 			} 
 
-			execute(new SendMessage(chatId, text.substring(0,4095)).setParseMode("html").disableWebPagePreview());
+			execute(new SendMessage(chatId, text.length()>4096?text.substring(0,4095):text).setParseMode("html").disableWebPagePreview());
 		} catch (TelegramApiException e) {
 			log.error("", e);		
 		}
