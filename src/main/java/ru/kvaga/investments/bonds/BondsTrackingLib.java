@@ -59,7 +59,7 @@ public class BondsTrackingLib {
 		
 //		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		
-		String htmlContent = TelegramBotLib.getURLContent(
+		String htmlContentTinkoff = TelegramBotLib.getURLContent(
 //				"https://www.tinkoff.ru/invest/bonds/XS0191754729/" // Dollar
 //				"https://www.tinkoff.ru/invest/bonds/RU000A0ZZ0L6/" // RUB
 //				"https://www.tinkoff.ru/invest/bonds/EGPT0431/"     // Euro
@@ -68,9 +68,12 @@ public class BondsTrackingLib {
 		
 				);
 		//StocksTrackingLib.getFullNameOfStock(response, stockName, urlText, REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME)
-		System.out.println(bondProfitability(getInfoFromHTMLForCalculationProfitability(htmlContent), StocksTrackingLib.getCurrentPriceOfStock("", htmlContent, "")));
+//		System.out.println(bondProfitability(getInfoFromHTMLForCalculationProfitability(htmlContentTinkoff), StocksTrackingLib.getCurrentPriceOfStock("", htmlContentTinkoff, "")));;
+		String htmlContentMoex = TelegramBotLib.getURLContent(String.format(MOEX_BONDIZATION_URL_PATTERN, "XS0114288789"));
+		Bond moexBond = getBondObjectFromString(htmlContentMoex);
+//		System.out.println(moexBond);
+		printXMLObject(moexBond);
 		
-		;
 	}
 
 	
@@ -264,12 +267,12 @@ public class BondsTrackingLib {
 	}
 	*/
 	// Read XML object from file, then print this object
-    public static Document getBondObjectFromString(String xmlString) throws JAXBException {
+    public static Bond getBondObjectFromString(String xmlString) throws JAXBException {
     	JAXBContext jaxbContext;
-		File feedXml = new File(xmlString);
-	    jaxbContext = JAXBContext.newInstance(Document.class);              
+//		File feedXml = new File(xmlString);
+	    jaxbContext = JAXBContext.newInstance(Bond.class);              
 	    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-	    Document rss = (Document) jaxbUnmarshaller.unmarshal(new StringReader(xmlString));
+	    Bond rss = (Bond) jaxbUnmarshaller.unmarshal(new StringReader(xmlString));
 	    return rss;
 	}
     

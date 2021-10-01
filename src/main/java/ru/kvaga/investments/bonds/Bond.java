@@ -1,6 +1,18 @@
 package ru.kvaga.investments.bonds;
 
-public class Bond {
-	private Document document;
-}
+import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name="document")
+public class Bond {
+	private ArrayList<DataAmortizations> data;
+	
+	public ArrayList<DataAmortizations> getData() {
+		return data;
+	}
+
+	public void setData(ArrayList<DataAmortizations> data) {
+		this.data = data;
+	}
+}
