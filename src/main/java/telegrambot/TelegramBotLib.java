@@ -14,24 +14,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
 
 
-import ru.kvaga.investments.stocks.StocksTrackingException.GetContentOFSiteException;
-import ru.kvaga.investments.stocks.StocksTrackingException.GetCurrentPriceOfStockException.Common;
-import ru.kvaga.investments.stocks.StocksTrackingException.GetFullStockNameException.ParsingResponseException;
-import ru.kvaga.investments.stocks.StocksTrackingLib;
-import ru.kvaga.investments.stocks.StocksTrackingException;
+import ru.kvaga.investments.lib.StocksTrackingException.GetContentOFSiteException;
+import ru.kvaga.investments.lib.StocksTrackingException.GetCurrentPriceOfStockException.Common;
+import ru.kvaga.investments.lib.StocksTrackingException.GetFullStockNameException.ParsingResponseException;
+import ru.kvaga.investments.lib.InstrumentsTrackingLib;
+import ru.kvaga.investments.lib.StocksTrackingException;
 //import ru.kvaga.investments.stocks.StocksTrackingLib;
 import telegrambot.InvestBotException.GetURLContentException;
 
 
 public class TelegramBotLib {
 
-	private static final Logger log = LogManager.getLogger(TelegramBotLib.class);
+	final static Logger log = LogManager.getLogger(TelegramBotLib.class);
 	public static telegrambot.User getUser(Update update) {
 		String _userName=getIncomingUserName(update);
 		
@@ -126,7 +126,7 @@ public class TelegramBotLib {
 		String response=getURLContent(url);
 //		System.out.println("RESP: ["+response+"]");
 		log.debug("URL content for ticker ["+ticker+"] received");
-		String fullName=StocksTrackingLib.getFullNameOfStock(response, ticker, url, searchTickerPattern);
+		String fullName=InstrumentsTrackingLib.getFullNameOfStock(response, ticker, url, searchTickerPattern);
 		log.debug("Full name of ticker ["+ticker+"] received: " + fullName);
 //		currentPrice = getCurrentPriceOfStock(si.getName(), response, url);
 //		System.out.println("Current price received: " + currentPrice);
@@ -195,7 +195,7 @@ public class TelegramBotLib {
 		try {
 			String response =getURLContent(url);
 //			System.out.println(response.substring(0, 200));
-			System.out.println(StocksTrackingLib.getFullNameOfStock(response, "SBER", url, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS));
+			System.out.println(InstrumentsTrackingLib.getFullNameOfStock(response, "SBER", url, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS));
 		} catch (GetURLContentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -3,7 +3,8 @@ package telegrambot;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
@@ -16,7 +17,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 // https://habr.com/ru/post/476306/
 
 public class _Bot extends TelegramLongPollingBot {
-    private static final Logger log = Logger.getLogger(_Bot.class);
+	final static Logger log = LogManager.getLogger(_Bot.class);
 
     final int RECONNECT_PAUSE =10000;
 

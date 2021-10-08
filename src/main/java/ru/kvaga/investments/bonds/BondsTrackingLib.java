@@ -1,7 +1,7 @@
 package ru.kvaga.investments.bonds;
 
-import ru.kvaga.investments.stocks.StocksTrackingException.GetContentOFSiteException;
-import ru.kvaga.investments.stocks.StocksTrackingException.GetCurrentPriceOfStockException.Common;
+import ru.kvaga.investments.lib.StocksTrackingException.GetContentOFSiteException;
+import ru.kvaga.investments.lib.StocksTrackingException.GetCurrentPriceOfStockException.Common;
 
 import java.io.File;
 import java.io.StringReader;
@@ -19,7 +19,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import ru.kvaga.investments.stocks.StocksTrackingLib;
+import ru.kvaga.investments.lib.InstrumentsTrackingLib;
 import telegrambot.InvestBotException.GetURLContentException;
 import telegrambot.TelegramBotLib;
 

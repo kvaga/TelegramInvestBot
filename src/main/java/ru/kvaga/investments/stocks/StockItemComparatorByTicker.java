@@ -2,9 +2,11 @@ package ru.kvaga.investments.stocks;
 
 import java.util.Comparator;
 
-public class StockItemComparatorByTicker implements Comparator<StockItem> {
+import ru.kvaga.investments.Instrument;
 
-	public int compare(StockItem o1, StockItem o2) {
+public class StockItemComparatorByTicker implements Comparator<Instrument> {
+
+	public int compare(Instrument o1, Instrument o2) {
 		if(o1 == o2)
 			return 0;
 		if(o1==null)

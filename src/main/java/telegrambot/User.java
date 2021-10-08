@@ -53,6 +53,10 @@ public class User {
 	private int state;
 	private int scenario;
 	
+	public String toString() {
+		return "User [userName="+userName+", state="+states.get(state)+", scenario="+scenarios.get(scenario)+"]";
+	}
+	
 	private ObjectForSCENARIO_ADD_STOCK_TO_WATCHLIST objectSCENARIO_ADD_STOCK_TO_WATCHLIST=null;
 	
 	public User(String userName) {

@@ -4,12 +4,15 @@ import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.util.concurrent.AbstractScheduledService.Scheduler;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import ru.kvaga.investments.bonds.Bond;
+import ru.kvaga.investments.etfs.Etf;
+import ru.kvaga.investments.stocks.StockItem;
 import telegrambot.ConfigMap;
 
 
@@ -21,8 +24,9 @@ public class BackgroudJobManager {
 
 	final static Logger log = LogManager.getLogger(BackgroudJobManager.class);
 
-	public static void init (File listOfStocksFile, File listOfETFsFile, File listOfBondsFile) {
-		log.info("Try to start BackgroudJobManager");
+	public static void init () {
+		log.info("Init BackgroudJobManager started");
+//		File listOfStocksFile	, File listOfETFsFile, File listOfBondsFile;
 		schedulerStocks = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("stocks-job-%d").build());
 		schedulerETFs = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("etfs-job-%d").build());
 		schedulerBonds = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("bonds-job-%d").build());
@@ -30,33 +34,30 @@ public class BackgroudJobManager {
 
 //		scheduler.scheduleAtFixedRate(new UpdateCurrentPricesOfStocksJob(listOfStocksFile), 0, 60, TimeUnit.SECONDS);
 		
-		schedulerBondsProfitability.scheduleAtFixedRate(new UpdateProfitabilityOfBonds(), 0, 24, TimeUnit.HOURS);
-		log.info("BackgroudJobManager started with jobs [UpdateProfitabilityOfBonds for each 24 hours]");
+		if(!ConfigMap.TEST_MODE) {
+			schedulerStocks.scheduleAtFixedRate(new UpdateCurrentPricesOfInstrumentsJob(new StockItem(), ConfigMap.TEMPLATE_URL_TINKOFF_STOCKS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS), 0, 4, TimeUnit.HOURS);
+			log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfStocksJob for each 4 hours]");
+			schedulerETFs.scheduleAtFixedRate(new UpdateCurrentPricesOfInstrumentsJob(new Etf(), 		ConfigMap.TEMPLATE_URL_TINKOFF_ETFS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_ETFS), 0, 4, TimeUnit.HOURS);
+			log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfETFsJob for each 4 hours]");
+//			schedulerBondsProfitability.scheduleAtFixedRate(new UpdateProfitabilityOfBonds(), 0, 24, TimeUnit.HOURS);			
+//			log.info("BackgroudJobManager started with jobs [UpdateProfitabilityOfBonds for each 24 hours]");
+		}
+//		schedulerBonds.scheduleAtFixedRate(new UpdateCurrentPricesOfInstrumentsJob(new Bond(),  		ConfigMap.TEMPLATE_URL_TINKOFF_BONDS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_BONDS), 0, 4, TimeUnit.HOURS);
+//		log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfBondsJob for each 4 hours]");
 		
-		schedulerStocks.scheduleAtFixedRate(new UpdateCurrentPricesOfStocksJob("Stock",listOfStocksFile, ConfigMap.URL_TEXT_TINKOFF_STOCKS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS), 0, 4, TimeUnit.HOURS);
-		log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfStocksJob for each 4 hours]");
-		
-		schedulerETFs.scheduleAtFixedRate(new UpdateCurrentPricesOfStocksJob("ETF", listOfETFsFile, ConfigMap.URL_TEXT_TINKOFF_ETFS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_ETFS), 0, 4, TimeUnit.HOURS);
-		log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfETFsJob for each 4 hours]");
-		
-		schedulerBonds.scheduleAtFixedRate(new UpdateCurrentPricesOfStocksJob("Bond", listOfBondsFile, ConfigMap.URL_TEXT_TINKOFF_BONDS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_BONDS), 0, 4, TimeUnit.HOURS);
-		log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfBondsJob for each 4 hours]");
-		
-		
-//		System.out.println("BackgroudJobManager started: " + event);
-//		https://examples.javacodegeeks.com/enterprise-java/quartz/quartz-cron-schedule-example/
-//		Scheduler scheduler = Scheduler
-//        scheduler.schedule("5 8,21 * * 1-5", new UpdateCurrentPricesOfStocksJob(listOfStocksFile));
-//        scheduler.start();
-//        servletContextEvent.getServletContext().setAttribute("SCHEDULER", scheduler);
+		log.info("Init BackgroudJobManager finished");
+
 	}
 	
 
     public static  void destroy() {
 		log.info("BackgroudJobManager destroyed");
-		schedulerStocks.shutdownNow();    
-		schedulerETFs.shutdownNow();    
-		schedulerBonds.shutdownNow();    
+		if(schedulerStocks!=null)
+			schedulerStocks.shutdownNow();    
+		if(schedulerETFs!=null)
+			schedulerETFs.shutdownNow();    
+		if(schedulerBonds!=null)
+			schedulerBonds.shutdownNow();    
 
     }
 }

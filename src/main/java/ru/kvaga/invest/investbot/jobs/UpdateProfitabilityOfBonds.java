@@ -6,25 +6,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ru.kvaga.investments.bonds.BondItemForPrinting;
 import ru.kvaga.investments.bonds.BondItemForProfitabilityPrinting;
 import ru.kvaga.investments.bonds.BondItemForProfitabilityPrintingComparatorByProfitability;
 import ru.kvaga.investments.bonds.BondsTrackingLib;
 import ru.kvaga.investments.stocks.StockItemForPrintingComparatorByPercentFromTrackingPrice;
-import ru.kvaga.investments.stocks.StocksTrackingLib;
+import ru.kvaga.investments.lib.InstrumentsTrackingLib;
 import ru.kvaga.telegram.sendmessage.TelegramSendMessage;
 import telegrambot.App;
 import telegrambot.ConfigMap;
 import telegrambot.TelegramBotLib;
 
 public class UpdateProfitabilityOfBonds implements Runnable {
-	private static Logger log = LogManager.getLogger(UpdateProfitabilityOfBonds.class);
+	final static Logger log = LogManager.getLogger(UpdateProfitabilityOfBonds.class);
 	String urlOfForeignBondsList = "https://www.tinkoff.ru/invest/bonds/?country=Foreign&orderType=Desc&sortType=ByYieldToClient&start=0&end=220";
 
-	private boolean forcedBol = false;
+	private boolean forcedBol = true;
 
 	public UpdateProfitabilityOfBonds(boolean forced) {
 		this.forcedBol = forced;
@@ -36,7 +36,7 @@ public class UpdateProfitabilityOfBonds implements Runnable {
 
 	public void run() {
 		try {
-			log.debug("Job started");
+			log.debug("UpdateProfitabilityOfBonds started");
 			if (!forcedBol) {
 				if (!ConfigMap.jobsEnabledBol) {
 					log.info("Jobs disabled by user. Finished.");
@@ -52,16 +52,16 @@ public class UpdateProfitabilityOfBonds implements Runnable {
 
 			for (String ticker : mapOfTickersAndBondNames.keySet()) {
 				try {
-					String urlOfBond = String.format(ConfigMap.URL_TEXT_TINKOFF_BONDS, ticker);
+					String urlOfBond = String.format(ConfigMap.TEMPLATE_URL_TINKOFF_BONDS, ticker);
 					String html = TelegramBotLib.getURLContent(urlOfBond);
 					listOfBonds.add(new BondItemForProfitabilityPrinting(ticker, mapOfTickersAndBondNames.get(ticker),
 							BondsTrackingLib.bondProfitability(
 									BondsTrackingLib.getInfoFromHTMLForCalculationProfitability(html),
-									StocksTrackingLib.getCurrentPriceOfStock("", html, ""))));
+									InstrumentsTrackingLib.getCurrentPriceOfStock("", html, ""))));
 				} catch (Exception e) {
 					log.error("Couldn't get info for calculation profitability for ticker [" + ticker + "]", e);
 					App.telegramSendMessage.sendMessage("BondException: <a href='"
-							+ String.format(ConfigMap.URL_TEXT_TINKOFF_BONDS, ticker) + "'>"
+							+ String.format(ConfigMap.TEMPLATE_URL_TINKOFF_BONDS, ticker) + "'>"
 							+ URLEncoder.encode(mapOfTickersAndBondNames.get(ticker), StandardCharsets.UTF_8.toString())
 							+ "</a> ");
 				}
@@ -70,7 +70,7 @@ public class UpdateProfitabilityOfBonds implements Runnable {
 			Collections.sort(listOfBonds, new BondItemForProfitabilityPrintingComparatorByProfitability());
 
 			for (BondItemForProfitabilityPrinting bifpp : listOfBonds) {
-				String message = "Bond: <a href='" + String.format(ConfigMap.URL_TEXT_TINKOFF_BONDS, bifpp.getTicker())
+				String message = "Bond: <a href='" + String.format(ConfigMap.TEMPLATE_URL_TINKOFF_BONDS, bifpp.getTicker())
 						+ "'>" + bifpp.getBondName() + "</a> " + TelegramSendMessage.LINEBREAK
 						+ String.format("Profitability: %.2f", bifpp.getProfitability());
 
@@ -113,7 +113,7 @@ public class UpdateProfitabilityOfBonds implements Runnable {
 		} catch (Exception e) {
 			log.error("UpdateProfitabilityOfBondsException", e);
 		}
-		log.debug("Job finished");
+		log.debug("UpdateProfitabilityOfBonds finished");
 
 	}
 

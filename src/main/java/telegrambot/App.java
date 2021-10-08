@@ -5,16 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.api.objects.Update;
 
 import ru.kvaga.invest.investbot.jobs.BackgroudJobManager;
+import ru.kvaga.investments.stocks.StockItem;
 import ru.kvaga.telegram.sendmessage.TelegramSendMessage;
 import ru.kvaga.telegram.sendmessage.TelegramSendMessageException.UnsupportedParameterException;
 
 public class App {
-    private static final Logger log = Logger.getLogger(App.class);
+	final static Logger log = LogManager.getLogger(App.class);
 	public static ru.kvaga.telegram.sendmessage.TelegramSendMessage telegramSendMessage=null;
 	private static String TELEGRAM_TOKEN;
 	private static String TELEGRAM_CHANNEL_NAME;
@@ -58,12 +60,14 @@ public class App {
 			System.exit(-1);
 		}
 		
-    	BackgroudJobManager.init(listOfStocksFile, listOfETFsFile, listOfBondsFile);
+    	BackgroudJobManager.init();
         
     	ApiContextInitializer.init();
         Users.addUser(new User("Kvagalex"));
         InvestBot investBot = new InvestBot(TELEGRAM_BOT_NAME, TELEGRAM_TOKEN);
         investBot.botConnect();
+        
+        
         
 //        BackgroudJobManager.destroy();
 

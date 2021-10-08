@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+  <Appenders>
+    <Console name="ConsoleTEl" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+ <RollingRandomAccessFile name="LogTel" fileName="${sys:catalina.base}/logs/telegrambot.log" filePattern="$${sys:catalina.base}/logs/telegrambot.log.%d{yyyy-MM-dd-HH}">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36}:%L - %msg%n"/>
+			                   
+            <Policies>
+					<OnStartupTriggeringPolicy />
+					<SizeBasedTriggeringPolicy size="20 MB" />
+					<TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+  </RollingRandomAccessFile>
+</Appenders>
+  <Loggers>
+    <Root level="ERROR">
+      <AppenderRef ref="ConsoleTEl"/>
+    </Root>
+    <Logger name="ru.kvaga" level="debug" additivity="false">
+      <!--<AppenderRef ref="Console"/>-->
+      <AppenderRef ref="LogTel"/>
+    </Logger>
+     <Logger name="custom" level="debug" additivity="false">
+      <AppenderRef ref="ConsoleTEl"/>
+    </Logger>
+  </Loggers>
+</Configuration>

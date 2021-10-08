@@ -9,3 +9,7 @@ bin/
 *.log
 qqq
 /target/
+data/*
+test*
+Test*
+*.csv
