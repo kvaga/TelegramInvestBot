@@ -20,7 +20,7 @@ public class ConfigMap {
 
 	public static boolean TEST_MODE=System.getProperty("TEST_MODE")!=null?true:false;
 	public static String adminLogin;
-	public static String appHttpLink;
+	public static String appHttpLink; 
 	public static String adminPassword;
 	public static File configFile = new File(System.getProperty("telegrambot.config.file"));
 	public static File dataPath;
