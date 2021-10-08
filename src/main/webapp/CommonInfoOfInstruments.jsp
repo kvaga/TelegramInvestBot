@@ -7,7 +7,8 @@
     ru.kvaga.investments.Instrument,
     ru.kvaga.investments.stocks.StockItem,
     ru.kvaga.investments.bonds.Bond,
-    ru.kvaga.investments.etfs.Etf
+    ru.kvaga.investments.etfs.Etf,
+    telegrambot.ConfigMap
     "
 %>
     
@@ -37,7 +38,7 @@ String instrument = request.getParameter("instrument");
 if(instrument!=null && instrument.equals("stocks")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new StockItem())){
 		out.write("<tr>");
-		out.write("<td>"+si.getName()+"</td>");
+		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_STOCKS,si.getName())+"\">"+si.getName()+"</a></td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
 		out.write("<td>"+(si.getLastPrice()/si.getTraceablePrice()*100-100)+"</td>");
@@ -47,7 +48,7 @@ if(instrument!=null && instrument.equals("stocks")){
 }else if(instrument!=null && instrument.equals("bonds")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new Bond())){
 		out.write("<tr>");
-		out.write("<td>"+si.getName()+"</td>");
+		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_BONDS,si.getName())+"\">"+si.getName()+"</a></td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
 		out.write("<td>"+(si.getLastPrice()/si.getTraceablePrice()*100-100)+"</td>");
@@ -57,7 +58,7 @@ if(instrument!=null && instrument.equals("stocks")){
 }else if(instrument!=null && instrument.equals("etfs")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new Etf())){
 		out.write("<tr>");
-		out.write("<td>"+si.getName()+"</td>");
+		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_ETFS,si.getName())+"\">"+si.getName()+"</a></td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
 		out.write("<td>"+(si.getLastPrice()/si.getTraceablePrice()*100-100)+"</td>");

@@ -76,7 +76,7 @@ public class Instrument {
 	       }else if(instrument instanceof Etf) {
 	           ServerUtils.saveXMLObjectToFile(ServerUtils.getEtfFileByName(name), this);
 	       }
-        log.debug(instrument + " successfully saved to a file");
+        log.debug(this + " successfully saved to a file");
 	}
 	public static synchronized Instrument readXMLObjectFromFile(String instrumentName, Instrument instrument) throws JAXBException {
 	       Instrument item = null;
