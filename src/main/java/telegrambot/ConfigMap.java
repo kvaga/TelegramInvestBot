@@ -10,12 +10,12 @@ public class ConfigMap {
 	public static String TEMPLATE_URL_TINKOFF_BONDS="https://www.tinkoff.ru/invest/bonds/%s/";
 	public static boolean jobsEnabledBol=false;
 
-	public static String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS="<title data-meta-dynamic=\"true\">Купить акции (?<fullName>.*) \\(%s\\).*<\\/title>" ;
+	public static String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS="<title data-meta-dynamic=\"true\">РљСѓРїРёС‚СЊ Р°РєС†РёРё (?<fullName>.*) \\(%s\\).*<\\/title>" ;
 	public static String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_ETFS="<title data-meta-dynamic=\"true\">.+ ETF (?<fullName>.*) \\(%s\\).*<\\/title>.*" ;
-	//       <title data-meta-dynamic=\"true\">Купить ETF » (FXDE) онлайн: стоимость биржевых фондов сегодня</title>
+	//       <title data-meta-dynamic=\"true\">пїЅпїЅпїЅпїЅпїЅпїЅ ETF пїЅ (FXDE) пїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ</title>
 
 	public static String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_BONDS="<meta charset=\"UTF-8\">.*" + 
-			"<title data-meta-dynamic=\"true\">Купить облигации (?<fullName>.*) \\(%s\\).*<\\/title>.*" + 
+			"<title data-meta-dynamic=\"true\">РљСѓРїРёС‚СЊ РѕР±Р»РёРіР°С†РёРё (?<fullName>.*) \\(%s\\).*<\\/title>.*" + 
 			"<meta property=\"og:title\"" ;
 
 	public static boolean TEST_MODE=System.getProperty("TEST_MODE")!=null?true:false;

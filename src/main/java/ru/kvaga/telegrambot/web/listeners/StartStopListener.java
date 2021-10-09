@@ -31,6 +31,7 @@ import telegrambot.Users;
 @WebListener
 public class StartStopListener implements ServletContextListener{
 	 final static Logger log = LogManager.getLogger(StartStopListener.class);
+	 private static InvestBot investBot=null;
 	 @Override
 	    public void contextInitialized(ServletContextEvent servletContextEvent) {
 	 
@@ -159,8 +160,11 @@ public class StartStopListener implements ServletContextListener{
 
 			ApiContextInitializer.init();
 	        Users.addUser(new User("Kvagalex"));
-	        InvestBot investBot = new InvestBot(ConfigMap.TELEGRAM_BOT_NAME, ConfigMap.TELEGRAM_TOKEN);
+	        if(investBot==null)
+	        	investBot = new InvestBot(ConfigMap.TELEGRAM_BOT_NAME, ConfigMap.TELEGRAM_TOKEN);
+	        
 	        investBot.botConnect();
+	        
 			App.telegramSendMessage = new ru.kvaga.telegram.sendmessage.TelegramSendMessage(ConfigMap.TELEGRAM_TOKEN, ConfigMap.TELEGRAM_CHANNEL_NAME, TelegramSendMessage.PARSE_MODE_HTML, TelegramSendMessage.WEB_PAGE_PREVIEW_DISABLE);
 
 	        log.info("telegrambot initialized");
@@ -176,6 +180,9 @@ public class StartStopListener implements ServletContextListener{
 //	    	if(InfluxDB.getInstance()!=null)
 //	    		InfluxDB.getInstance().destroy();
 	    	BackgroudJobManager.destroy();
+	    	if(investBot!=null) {
+	    		investBot.destroy();
+	    	}
 	        log.info("Servlet has been stopped.");
 	    }
 	    
