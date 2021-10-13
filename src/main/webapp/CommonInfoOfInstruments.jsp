@@ -31,7 +31,7 @@
 
 <table id="table" border="1">
 <th onclick="sortTable(1)">Name</th><th onclick="sortTable(2)">FullName</th><th>TraceablePrice</th><th>Last Price</th><th onclick="sortTable(4)">Div. % From Traceable Price</th><th onclick="sortTable(5)">Last Updated</th>
-<%
+<% 
 //log.debug("Sorting "+label+"s...");
 //Collections.sort(stockItemsForPrinting, new StockItemForPrintingComparatorByPercentFromTrackingPrice());
 String instrument = request.getParameter("instrument");
