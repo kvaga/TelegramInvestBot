@@ -155,7 +155,7 @@ public class InstrumentsTrackingLib {
 //		String REGEX_PATTERN_TEXT_TINKOFF =         "data-qa-type=\"uikit\\/money\">(?<currentPrice>\\d+.*?)[₽|$|€]<\\/span>";
 		//String REGEX_PATTERN_TEXT_TINKOFF = "На \\d{2}[.]\\d{2}[.]\\d{4} стоимость одной акции [компании|фонда] (?<name>.*) составляет (?<currentPrice>.*) [дол|евр|руб|$].* Сделка по";
 
-		String REGEX_PATTERN_TEXT_TINKOFF = "На \\d{2}[.]\\d{2}[.]\\d{4} стоимость одной акции (компании|фонда) (?<name>.*) составляет (?<currentPrice>.*) (долларов|доллар|доллара|евро|рубль|рубля|рублей|\\$|₽|€).* Сделка по";
+		String REGEX_PATTERN_TEXT_TINKOFF = "На \\d{2}[.]\\d{2}[.]\\d{4} стоимость одной акции (компании|фонда) (?<name>.*) составляет (?<currentPrice>.*) (долларов|доллар|доллара|евро|рубль|рубля|рублей|\\$|₽|€)[.]";
 //				+ "<span class=\"Money-module__money_2PlRa\" data-qa-type=\"uikit\\/money\">(?<currentPrice>\\d+.*<span>.*)[₽|$]<\\/span><\\/span><\\/span>";
 //		_hidden_on_phone_2W092 Column-module__column_hidden_on_tabletS_JyZiL Column-module__column_hidden_on_tabletL_skZDO Column-module__column_size_desktopS_4_laKAk" style="margin-bottom:0"><div data-qa-file="Sticky"><div data-qa-file="Sticky"></div><div data-qa-file="StickySecurityPriceDetail"><div class="SecurityPriceDetailsPure__wrapper_srZsI" data-qa-file="SecurityPriceDetailsPure"><div class="SecurityPriceDetailsPure__inviting_llWIp" data-qa-file="SecurityPriceDetailsPure"><div class="SecurityInvitingScreenPure__wrapper_2wZTB" data-qa-file="SecurityInvitingScreenPure"><div class="SecurityInvitingScreenPure__priceText_37tcc" data-qa-file="SecurityInvitingScreenPure">Цена<!-- --> <!-- -->акции<!-- --> <!-- -->10 февраля 2021</div><div class="SecurityInvitingScreenPure__price_31WUF" data-qa-file="SecurityInvitingScreenPure"><span class="SecurityInvitingScreenPure__priceValue_1GEPt" data-qa-file="SecurityInvitingScreenPure"><span class="Money-module__money_2PlRa" data-qa-type="uikit/money">266<span>,97<!-- --> <!-- -->₽</span></span></span>
 		String regexPatternText = REGEX_PATTERN_TEXT_TINKOFF; //266<span>,97<!-- --> <!-- -->₽
@@ -386,8 +386,8 @@ public class InstrumentsTrackingLib {
 							e);
 					// actualStockItems.add((StockItem)si);
 					try {
-						log.error("Trying to send message to telegram about exception");
-						App.telegramSendMessage.sendMessage(("Error for URL [" + url + "]: " + e).substring(0, 100));
+						log.error("Trying to send message to telegram about exception for url ["+url+"]", e);
+						App.telegramSendMessage.sendMessage(("Error for URL [" + url + "]: Exception: " + e).substring(0, 100));
 					} catch (Exception e1) {
 						log.error("Unable to send message about exception to telegram.");
 					}

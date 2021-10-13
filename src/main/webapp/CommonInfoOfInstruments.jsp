@@ -30,7 +30,7 @@
 <body>
 
 <table id="table" border="1">
-<th onclick="sortTable(1)">Name</th><th>TraceablePrice</th><th>Last Price</th><th onclick="sortTable(4)">Div. % From Traceable Price</th><th onclick="sortTable(5)">Last Updated</th>
+<th onclick="sortTable(1)">Name</th><th onclick="sortTable(2)">FullName</th><th>TraceablePrice</th><th>Last Price</th><th onclick="sortTable(4)">Div. % From Traceable Price</th><th onclick="sortTable(5)">Last Updated</th>
 <%
 //log.debug("Sorting "+label+"s...");
 //Collections.sort(stockItemsForPrinting, new StockItemForPrintingComparatorByPercentFromTrackingPrice());
@@ -39,6 +39,7 @@ if(instrument!=null && instrument.equals("stocks")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new StockItem())){
 		out.write("<tr>");
 		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_STOCKS,si.getName())+"\">"+si.getName()+"</a></td>");
+		out.write("<td>"+si.getFullName()+"</td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
 		out.write("<td>"+(si.getLastPrice()/si.getTraceablePrice()*100-100)+"</td>");
@@ -49,6 +50,7 @@ if(instrument!=null && instrument.equals("stocks")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new Bond())){
 		out.write("<tr>");
 		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_BONDS,si.getName())+"\">"+si.getName()+"</a></td>");
+		out.write("<td>"+si.getFullName()+"</td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
 		out.write("<td>"+(si.getLastPrice()/si.getTraceablePrice()*100-100)+"</td>");
@@ -59,6 +61,7 @@ if(instrument!=null && instrument.equals("stocks")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new Etf())){
 		out.write("<tr>");
 		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_ETFS,si.getName())+"\">"+si.getName()+"</a></td>");
+		out.write("<td>"+si.getFullName()+"</td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
 		out.write("<td>"+(si.getLastPrice()/si.getTraceablePrice()*100-100)+"</td>");
