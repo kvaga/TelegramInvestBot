@@ -67,6 +67,11 @@ public class StartStopListener implements ServletContextListener{
 			ConfigMap.appHttpLink=props.getProperty("app.http_link");
 			log.info("Loaded parameter app.http_link="+ConfigMap.appHttpLink);
 			
+			if(System.getProperty("TEST_MODE")!=null) {
+				ConfigMap.TEST_MODE=true;
+			}
+			log.info("Loaded parameter TEST_MODE="+ConfigMap.TEST_MODE);
+			
 //			try {
 //				ConfigMap.INFLUXDB_ENABLED=Boolean.parseBoolean(props.getProperty("influxdb.enabled"));
 //				
@@ -125,10 +130,7 @@ public class StartStopListener implements ServletContextListener{
 //			}
 //			log.info("InfluxDB: " + InfluxDB.getInstance());
 //
-//			if(System.getProperty("TEST_MODE")!=null) {
-//				ConfigMap.TEST_MODE=true;
-//			}
-//			log.info("Loaded parameter TEST_MODE="+ConfigMap.TEST_MODE);
+
 //			
 //			try {
 //				ConfigMap.WAIT_TIME_AFTER_GET_CONTENT_URL_EXCEPTION_IN_MILLIS=Long.parseLong(props.getProperty("timeout.waittime_after_get_content_url_exception_in_millis"));

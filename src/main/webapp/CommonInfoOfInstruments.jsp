@@ -28,9 +28,15 @@
 <title>Common Information Of Instruments</title>
 </head>
 <body>
-
+<%
+//out.write("Status: " + session.getAttribute("status"));
+if(session.getAttribute("status")!=null){
+	out.write((String)session.getAttribute("status"));
+	session.removeAttribute("status");
+}
+%>
 <table id="table" border="1">
-<th onclick="sortTable(1)">Name</th><th onclick="sortTable(2)">FullName</th><th>TraceablePrice</th><th>Last Price</th><th onclick="sortTable(5)">Div. % From Traceable Price</th><th onclick="sortTable(6)">Last Updated</th>
+<th onclick="sortTable(1)">Name</th><th>Delete</th><th onclick="sortTable(3)">FullName</th><th>TraceablePrice</th><th>Last Price</th><th onclick="sortTable(6)">Div. % From Traceable Price</th><th onclick="sortTable(7)">Last Updated</th>
 <% 
 //log.debug("Sorting "+label+"s...");
 //Collections.sort(stockItemsForPrinting, new StockItemForPrintingComparatorByPercentFromTrackingPrice());
@@ -39,6 +45,7 @@ if(instrument!=null && instrument.equals("stocks")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new StockItem())){
 		out.write("<tr>");
 		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_STOCKS,si.getName())+"\">"+si.getName()+"</a></td>");
+		out.write("<td><a href=\"DeleteInstrument?ticker="+si.getName()+"&type=stock&redirectTo=/Stocks.jsp\">Delete</a></td>");
 		out.write("<td>"+si.getFullName()+"</td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
@@ -50,6 +57,7 @@ if(instrument!=null && instrument.equals("stocks")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new Bond())){
 		out.write("<tr>");
 		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_BONDS,si.getName())+"\">"+si.getName()+"</a></td>");
+		out.write("<td><a href=\"DeleteInstrument?ticker="+si.getName()+"&type=bond&redirectTo=/Bonds.jsp\">Delete</a></td>");
 		out.write("<td>"+si.getFullName()+"</td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
@@ -61,6 +69,7 @@ if(instrument!=null && instrument.equals("stocks")){
 	for (Instrument si : InstrumentsTrackingLib.getListOfInstruments(new Etf())){
 		out.write("<tr>");
 		out.write("<td><a href=\""+String.format(ConfigMap.TEMPLATE_URL_TINKOFF_ETFS,si.getName())+"\">"+si.getName()+"</a></td>");
+		out.write("<td><a href=\"DeleteInstrument?ticker="+si.getName()+"&type=etf&redirectTo=/Etfs.jsp\">Delete</a></td>");
 		out.write("<td>"+si.getFullName()+"</td>");
 		out.write("<td>"+si.getTraceablePrice()+"</td>");
 		out.write("<td>"+si.getLastPrice()+"</td>");
