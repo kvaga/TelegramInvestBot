@@ -71,7 +71,7 @@ public class TelegramBotLib {
 			con.setRequestProperty("user-agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36");
 
-			if (con.getContentType().toLowerCase().contains("charset=utf-8")) {
+			if (true/*con.getContentType().toLowerCase().contains("charset=utf-8")*/) {
 				charset = "UTF-8";
 			} else {
 				throw new InvestBotException.GetURLContentException(urlText,
@@ -136,7 +136,7 @@ public class TelegramBotLib {
 	/*
 	public static String getFullNameOfStock(String response, String stockName, String urlText, String regexPattern) throws ru.kvaga.investments.stocks.StocksTrackingException.GetFullStockNameException.ParsingResponseException {
 //		String REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME="<meta charset=\"UTF-8\">.*" + 
-//				"<title data-meta-dynamic=\"true\">Купить акции (?<fullName>.*) \\("+stockName+"\\).*</title>.*" + 
+//				"<title data-meta-dynamic=\"true\">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (?<fullName>.*) \\("+stockName+"\\).*</title>.*" + 
 //				"<meta property=\"og:title\"" ;
 		regexPattern=String.format(regexPattern, stockName);
 		log.debug("getFullNameOfStock: stockName ["+stockName+"], urlText ["+urlText+"], regexPattern ["+regexPattern+"]");
