@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -342,6 +343,7 @@ public class InstrumentsTrackingLib {
 						log.debug("Analyzing "+si.getClass()+" for sending [ticker: " + si.getName() + ", traceablePrice: "
 								+ si.getTraceablePrice() + ", lastPrice: " + si.getLastPrice() + "]");
 
+						si.setLastUpdated(new Date());
 //						if (si.getTraceablePrice() > currentPrice) {
 //							if(instrument instanceof Bond) {
 //								si.add((StockItemForPrinting)new BondItemForPrinting(si.getName(), si.getFullName(),
