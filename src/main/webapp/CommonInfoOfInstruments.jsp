@@ -26,6 +26,7 @@
 	}
 </style>
 <title>Common Information Of Instruments</title>
+
 </head>
 <body>
 <%
@@ -36,7 +37,7 @@ if(session.getAttribute("status")!=null){
 }
 %>
 <table id="table" border="1">
-<th onclick="sortTable(1)">Name</th><th onclick="sortTable(3)">FullName</th><th>TraceablePrice</th><th>Last Price</th><th onclick="sortTable(6)">Div. % From Traceable Price</th><th onclick="sortTable(7)">Last Updated</th><th>Delete</th>
+<th onclick="sortTable(1)">Name</th><th onclick="sortTable(2)">FullName</th><th>TraceablePrice</th><th>Last Price</th><th onclick="sortTable(5)">Div. % From Traceable Price</th><th onclick="sortTable(6)">Last Updated</th><th>Delete</th>
 <% 
 //log.debug("Sorting "+label+"s...");
 //Collections.sort(stockItemsForPrinting, new StockItemForPrintingComparatorByPercentFromTrackingPrice());
@@ -82,6 +83,10 @@ if(instrument!=null && instrument.equals("stocks")){
 }
 
 %>
+
+<script type="text/javascript">
+	sortTable(5);
+</script>
 </table>
 </body>
 </html>

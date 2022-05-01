@@ -33,15 +33,19 @@
   </error-page>
   <error-page>
     <error-code>500</error-code>
-    <location>/error.jsp</location>
+    <location>/Login.html</location>
   </error-page>
   <error-page>
     <error-code>501</error-code>
-    <location>/error.jsp</location>
+    <location>/Login.html</location>
   </error-page>
   <error-page>
     <error-code>502</error-code>
-    <location>/error.jsp</location>
+    <location>/Login.html</location>
+  </error-page>
+   <error-page>
+    <error-code>404</error-code>
+    <location>/Login.html</location>
   </error-page>
   <error-page>
     <error-code>503</error-code>

@@ -6,12 +6,49 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>TelegramBot</title>
+
+<style type="text/css">
+	.div-table {
+	  display:  table;
+        width:auto;
+        background-color:#eee;
+        border:1px solid  #666666;
+        border-spacing:5px;/*cellspacing:poor IE support for  this*/
+       /* border-collapse:separate;*/
+	}
+	.div-table-row {
+		display:table-row;
+		width:auto;
+	}
+	.div-table-row {
+		display:table-row;
+		width:auto;
+	}
+	.div-table-col {
+		float:left;/*fix for  buggy browsers*/
+        display:table-column;
+        width:200px;
+        background-color:#ccc;
+	}
+</style>
+
 </head>
 <body>
 <h3>Telegram Bot</h3>
-<a href="Stocks.jsp">Stocks</a></br>
-<a href="Bonds.jsp">Bonds</a></br>
-<a href=Etfs.jsp>Etfs</a></br>
+<div class="div-table">
+	<div class="div-table-head-row">
+		<div class="div-table-col">Instruments</div>
+		<div class="div-table-col">Settings</div>
+	</div>
+	<div class="div-table-row">
+		<div class="div-table-col">
+			<div class="div-table-col"><a href="Stocks.jsp">Stocks</a></div>
+			<div class="div-table-col"><a href="Bonds">Bonds</a></div>
+			<div class="div-table-col"><a href="Etfs.jsp">Etfs.jsp</a></div>
+		</div>
+		<div class="div-table-col"><a href="Settings.jsp">Settings.jsp</a></div>
+	</div>
+</div>
 
 <hr />
 </body>
