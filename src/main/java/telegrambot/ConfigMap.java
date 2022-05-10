@@ -23,6 +23,7 @@ public class ConfigMap {
 	public static String appHttpLink; 
 	public static String adminPassword;
 	public static File configFile = new File(System.getProperty("telegrambot.config.file"));
+	public static File configPath = new File(System.getProperty("telegrambot.config.path"));
 	public static File dataPath;
 	public static File 	bondsPath,
 						stocksPath,

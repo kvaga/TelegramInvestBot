@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -14,11 +15,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.Message;
 
 import kotlin.reflect.TypeOfKt;
 import ru.kvaga.investments.Instrument;
@@ -35,6 +40,7 @@ import ru.kvaga.telegram.sendmessage.TelegramSendMessage;
 import ru.kvaga.telegrambot.web.util.ServerUtils;
 import telegrambot.App;
 import telegrambot.ConfigMap;
+import telegrambot.Settings;
 import telegrambot.TelegramBotLib;
 import ru.kvaga.investments.lib.StocksTrackingException.GetCurrentPriceOfStockException.Common;
 import ru.kvaga.investments.lib.StocksTrackingException.GetCurrentPriceOfStockException.ParsingResponseException;
@@ -404,13 +410,32 @@ public class InstrumentsTrackingLib {
 //			Collections.sort(stockItemsForPrinting, new StockItemForPrintingComparatorByPercentFromTrackingPrice());
 //			StringBuilder message = new StringBuilder();
 			log.debug("Sending messages...");
-			if(instrument instanceof StockItem) 
-				App.telegramSendMessage.sendMessage("Current prices of Stocks were updated, link: [" + ConfigMap.appHttpLink + "Stocks.jsp]");
-			else if(instrument instanceof Bond)
-				App.telegramSendMessage.sendMessage("Current prices of Bonds were updated, link: [" + ConfigMap.appHttpLink + "Bonds.jsp]");
-			else if(instrument instanceof Etf) 
-				App.telegramSendMessage.sendMessage("Current prices of Etfs were updated, link: [" + ConfigMap.appHttpLink + "Etfs.jsp]");
+			try {
 				
+				if(instrument instanceof StockItem) {
+					ArrayList<String> messages = getInstrumentsForPrintedFormat(getTopInstruments(instrument));
+					if(messages.size()>0) {
+						messages.add("Current prices of Stocks were updated, link: [" + ConfigMap.appHttpLink + "Stocks.jsp]");
+						sendListOfMessages(messages);
+					}
+				}else if(instrument instanceof Bond) {
+					ArrayList<String> messages = getInstrumentsForPrintedFormat(getTopInstruments(instrument));
+					if(messages.size()>0) {
+						messages.add("Current prices of Bonds were updated, link: [" + ConfigMap.appHttpLink + "Bonds.jsp]");
+						sendListOfMessages(messages);
+					}
+				}else if(instrument instanceof Etf) { 
+					ArrayList<String> messages = getInstrumentsForPrintedFormat(getTopInstruments(instrument));
+					if(messages.size()>0) {
+						messages.add("Current prices of Etfs were updated, link: [" + ConfigMap.appHttpLink + "Etfs.jsp]");
+						sendListOfMessages(messages);
+					}
+					// oDo: App.telegramSendMessage.sendMessage("Current prices of Etfs were updated, link: [" + ConfigMap.appHttpLink + "Etfs.jsp]");
+				}
+			} catch (Exception e1) {
+				log.error("Exception", e1);
+				App.telegramSendMessage.sendMessage(("Exception (first 50 symbols): " + (e1.getMessage().length()>50?e1.getMessage().substring(0, 49):e1.getMessage())));
+			}	
 //			int countOfMessages=0;
 //			for (StockItemForPrinting sifp : stockItemsForPrinting) {
 //				/*
@@ -483,4 +508,47 @@ public class InstrumentsTrackingLib {
 
 	}
 
+	private static void sendListOfMessages(ArrayList<String> messages) throws Exception {
+		for(String message : messages) {
+			App.telegramSendMessage.sendMessage(message);
+			Thread.sleep(100);
+		}
+	}
+	
+	private static ArrayList<String> getInstrumentsForPrintedFormat(ArrayList<Instrument> instrumentList) throws UnsupportedEncodingException {
+		ArrayList<String> messages = new ArrayList<String>();	
+		for(Instrument instr : instrumentList) {
+			String message = " <a href='" + String.format(ConfigMap.TEMPLATE_URL_TINKOFF_STOCKS, instr.getName()) + "'>"
+				+ instr.getName() + "</a> " + URLEncoder.encode(instr.getFullName(),StandardCharsets.UTF_8.toString()) + TelegramSendMessage.LINEBREAK
+				+ String.format("Tracking Price: %.2f", instr.getTraceablePrice())
+				//+ TelegramSendMessage.LINEBREAK + String.format("Last Price: %.2f", instr.getLastPrice())
+				+ TelegramSendMessage.LINEBREAK + String.format("Current Price: %.2f", instr.getLastPrice())
+				+ TelegramSendMessage.LINEBREAK + 
+				"(" + getPercentFromTrackingPrice(instr) + "% from Tracking Price) "; 
+			messages.add(message);
+		}
+		return messages;
+	} 
+	
+	public static double getPercentFromTrackingPrice(Instrument instrument) {
+		return (instrument.getLastPrice()/instrument.getTraceablePrice())*100-100;
+	}
+	
+	
+
+	
+	private static ArrayList<Instrument> getTopInstruments(Instrument instrument) throws StocksTrackingException, JAXBException, IOException {
+		Settings settings = Settings.load();
+		ArrayList<Instrument> sortedInstrumentsList = getListOfInstruments(instrument);
+		log.debug("Sorting "+instrument+"...");
+		Collections.sort(sortedInstrumentsList, new InstrumentsComparatorByPercentFromTrackingPrice());
+		if(sortedInstrumentsList.size() -settings.getTelegramNotificationsTopCountForSending()>0) {
+			return new ArrayList<Instrument>(sortedInstrumentsList.subList(sortedInstrumentsList.size() -settings.getTelegramNotificationsTopCountForSending(), sortedInstrumentsList.size()));
+		}else {
+			return sortedInstrumentsList;
+		}
+	}
+	
+
 }
+

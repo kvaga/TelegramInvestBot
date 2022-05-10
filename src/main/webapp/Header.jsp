@@ -34,6 +34,9 @@
 
 </head>
 <body>
+	<div id="exception"></div>
+	<div id="loading"></div>
+	<script src="js/server.js"></script>
 <h3>Telegram Bot</h3>
 <div class="div-table">
 	<div class="div-table-head-row">
