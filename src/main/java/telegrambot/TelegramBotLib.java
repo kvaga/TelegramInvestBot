@@ -77,7 +77,7 @@ public class TelegramBotLib {
 				throw new InvestBotException.GetURLContentException(urlText,
 						String.format("Received unsupported charset: %s. ", con.getContentType()));
 			}
-			if (con.getContentEncoding().equals("gzip")) {
+			if (con.getContentEncoding() != null && con.getContentEncoding().equals("gzip")) {
 				try (InputStream gzippedResponse = con.getInputStream();
 						InputStream ungzippedResponse = new GZIPInputStream(gzippedResponse);
 						Reader reader = new InputStreamReader(ungzippedResponse, charset);
@@ -107,11 +107,14 @@ public class TelegramBotLib {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			if(e.getMessage()!=null && e.getMessage().contains("unable to find valid certification path to requested target")) {
+				System.out.println("[ERROR] -Djavax.net.ssl.trustStore="+System.getProperty("javax.net.ssl.trustStore"));
+			}
 //			log.error("GetURLContentException: couldn't get a content for the ["+urlText+"] URL", e);
 			if(con!=null) {
 				con.disconnect();
 			}
-			throw new InvestBotException.GetURLContentException(e.getMessage(),urlText);
+			throw new InvestBotException.GetURLContentException("Exception on URL: ["+urlText+"]." + e.getMessage(), urlText);
 		}
 	}
 

@@ -65,7 +65,14 @@ public class App {
     	ApiContextInitializer.init();
         Users.addUser(new User("Kvagalex"));
         InvestBot investBot = new InvestBot(TELEGRAM_BOT_NAME, TELEGRAM_TOKEN);
-        investBot.botConnect();
+        int countOfConnectAttempts=5;
+        while(investBot.botConnect()==null && --countOfConnectAttempts>0) {
+        	try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e1) {
+				log.error(e1);
+			}
+        }
         
         
         

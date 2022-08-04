@@ -541,7 +541,7 @@ public void sendListOfTrackingInstruments(Instrument instrument, Update update) 
 	}
 
 	private static TelegramBotsApi telegramBotsApi=null;
-	public void botConnect() {
+	public BotSession botConnect() {
 		log.debug("Trying to start up Bot");
 		if(telegramBotsApi==null)
 			telegramBotsApi = new TelegramBotsApi();
@@ -550,16 +550,12 @@ public void sendListOfTrackingInstruments(Instrument instrument, Update update) 
 				botSession = telegramBotsApi.registerBot(this);
 			log.info("TelegramAPI started. Look for messages");
 		} catch (TelegramApiRequestException e) {
-			log.error("Cant Connect. Pause " + RECONNECT_PAUSE / 1000 + "sec and try again. Error: " + e.getMessage());
-			try {
-				Thread.sleep(RECONNECT_PAUSE);
-			} catch (InterruptedException e1) {
-//				e1.printStackTrace();
-				log.error(e);
-				return;
-			}
-			botConnect();
+			log.error("Can't Connect. Error: " + e.getMessage());
+			e.printStackTrace();
 			
+						
+		}finally {
+			return botSession;
 		}
 		//log.debug("Bot initialized");
 		//

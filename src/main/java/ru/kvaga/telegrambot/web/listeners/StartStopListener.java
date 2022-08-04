@@ -40,8 +40,11 @@ public class StartStopListener implements ServletContextListener{
 			//ConfigMap.configFile = new File(System.getProperty("catalina.base").replaceAll("\\\\", "/")+"/conf/InvestBot.env");
 //			log.info("Got config file path: " + ConfigMap.configFile.getAbsolutePath());
 			Properties props = new Properties();
+			log("Loading config file: '" + System.getProperty("telegrambot.config.file")+"'");
+			log("Loading config path: '"+System.getProperty("telegrambot.config.path")+"'");
+			
 			props.load(new FileInputStream(ConfigMap.configFile));
-			log.info("Loaded config file: " + ConfigMap.configFile.getAbsolutePath());
+			log("Loaded config file: " + ConfigMap.configFile.getAbsolutePath());
 //			log.info("Looking for data.file parameter");
 //			ConfigMap.dataPath=new File(props.getProperty("data.path"));
 //			log.info("Found parameter data.path=" + ConfigMap.dataPath.getAbsolutePath());
@@ -51,26 +54,26 @@ public class StartStopListener implements ServletContextListener{
 //			log.info("Created parameter ConfigMap.feedsPath="+ConfigMap.feedsPath);
 			
 			ConfigMap.adminLogin=props.getProperty("web.admin.name");
-			log.info("Loaded parameter web.admin.login="+ConfigMap.adminLogin);
+			log("Loaded parameter web.admin.login="+ConfigMap.adminLogin);
 			ConfigMap.adminPassword=props.getProperty("web.admin.password");
-			log.info("Loaded parameter web.admin.password="+ConfigMap.adminPassword);
+			log("Loaded parameter web.admin.password="+ConfigMap.adminPassword);
 			ConfigMap.dataPath=new File(props.getProperty("web.server.data.path"));
-			log.info("Loaded parameter web.server.data.path="+ConfigMap.dataPath);
+			log("Loaded parameter web.server.data.path="+ConfigMap.dataPath);
 			
 			ConfigMap.stocksPath=new File(ConfigMap.dataPath.getPath() + "/stocks");
-			log.info("Loaded parameter stocksPath="+ConfigMap.stocksPath);
+			log("Loaded parameter stocksPath="+ConfigMap.stocksPath);
 			ConfigMap.bondsPath=new File(ConfigMap.dataPath.getPath() + "/bonds");
-			log.info("Loaded parameter bondsPath="+ConfigMap.bondsPath);
+			log("Loaded parameter bondsPath="+ConfigMap.bondsPath);
 			ConfigMap.etfsPath =new File(ConfigMap.dataPath.getPath() + "/etfs");
-			log.info("Loaded parameter etfsPath="+ConfigMap.etfsPath);
+			log("Loaded parameter etfsPath="+ConfigMap.etfsPath);
 
 			ConfigMap.appHttpLink=props.getProperty("app.http_link");
-			log.info("Loaded parameter app.http_link="+ConfigMap.appHttpLink);
+			log("Loaded parameter app.http_link="+ConfigMap.appHttpLink);
 			
 			if(System.getProperty("TEST_MODE")!=null) {
 				ConfigMap.TEST_MODE=true;
 			}
-			log.info("Loaded parameter TEST_MODE="+ConfigMap.TEST_MODE);
+			log("Loaded parameter TEST_MODE="+ConfigMap.TEST_MODE);
 			
 //			try {
 //				ConfigMap.INFLUXDB_ENABLED=Boolean.parseBoolean(props.getProperty("influxdb.enabled"));
@@ -154,25 +157,31 @@ public class StartStopListener implements ServletContextListener{
 //			}
 			
 			ConfigMap.TELEGRAM_TOKEN=props.getProperty("telegram.token");
-			log.info("Loaded parameter telegram.token="+ConfigMap.TELEGRAM_TOKEN);
+			log("Loaded parameter telegram.token="+ConfigMap.TELEGRAM_TOKEN);
 			ConfigMap.TELEGRAM_CHANNEL_NAME=props.getProperty("telegram.channel.name");
-			log.info("Loaded parameter telegram.channel.name="+ConfigMap.TELEGRAM_CHANNEL_NAME);
+			log("Loaded parameter telegram.channel.name="+ConfigMap.TELEGRAM_CHANNEL_NAME);
 			ConfigMap.TELEGRAM_BOT_NAME=props.getProperty("telegram.bot.name");
-			log.info("Loaded parameter telegram.bot.name="+ConfigMap.TELEGRAM_BOT_NAME);
+			log("Loaded parameter telegram.bot.name="+ConfigMap.TELEGRAM_BOT_NAME);
 
 			ApiContextInitializer.init();
 	        Users.addUser(new User("Kvagalex"));
 	        if(investBot==null)
 	        	investBot = new InvestBot(ConfigMap.TELEGRAM_BOT_NAME, ConfigMap.TELEGRAM_TOKEN);
-	        
-	        investBot.botConnect();
+	        int countOfConnectAttempts=5;
+	        while(investBot.botConnect()==null && --countOfConnectAttempts>0) {
+	        	try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e1) {
+					log.error(e1);
+				}
+	        }
 	        
 			App.telegramSendMessage = new ru.kvaga.telegram.sendmessage.TelegramSendMessage(ConfigMap.TELEGRAM_TOKEN, ConfigMap.TELEGRAM_CHANNEL_NAME, TelegramSendMessage.PARSE_MODE_HTML, TelegramSendMessage.WEB_PAGE_PREVIEW_DISABLE);
 
-	        log.info("telegrambot initialized");
+	        log("telegrambot initialized");
 	        BackgroudJobManager.init();
 		} catch (IOException | UnsupportedParameterException e) {
-			log.error("Can't get configuration parameters of servlet or init", e);
+			logError("Can't get configuration parameters of servlet or init", e);
 			return;
 		}
 	    }
@@ -186,6 +195,16 @@ public class StartStopListener implements ServletContextListener{
 	    		investBot.destroy();
 	    	}
 	        log.info("Servlet has been stopped.");
+	    }
+	    
+	    public void log(String text) {
+	    	System.out.println("[INFO] " + text);
+	    	log.info(text);    
+	    }
+	    public void logError(String text, Exception e) {
+	    	System.out.println("[ERROR] " + text);
+	    	e.printStackTrace();
+	    	log.error(text,e);    
 	    }
 	    
 	
