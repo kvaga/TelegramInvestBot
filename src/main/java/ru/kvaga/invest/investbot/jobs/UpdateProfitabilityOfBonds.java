@@ -35,6 +35,7 @@ public class UpdateProfitabilityOfBonds implements Runnable {
 	}
 
 	public void run() {
+		
 		try {
 			log.debug("UpdateProfitabilityOfBonds started");
 			if (!forcedBol) {
@@ -42,6 +43,14 @@ public class UpdateProfitabilityOfBonds implements Runnable {
 					log.info("Jobs disabled by user. Finished.");
 					return;
 				}
+			}
+			if(!BackgroudJobManager.isWorkingDay()) {
+				log.warn("Today is not working day. Skip");
+				return;
+			}
+			if(!BackgroudJobManager.isWorkingHours()) {
+				log.warn("Now is not working hour. Skip");
+				return;
 			}
 //			BondItemForProfitabilityPrinting bifpp = new BondItemForProfitabilityPrinting();
 			ArrayList<BondItemForProfitabilityPrinting> listOfBonds = new ArrayList<BondItemForProfitabilityPrinting>();

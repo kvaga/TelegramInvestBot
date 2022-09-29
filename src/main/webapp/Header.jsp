@@ -50,6 +50,7 @@
 			<div class="div-table-col"><a href="Etfs.jsp">Etfs.jsp</a></div>
 		</div>
 		<div class="div-table-col"><a href="Settings.jsp">Settings.jsp</a></div>
+		<div class="div-table-col"><a href="Settings?command=getsettings&redirectTo=/SettingsNew.jsp">Settings</a></div>
 	</div>
 </div>
 

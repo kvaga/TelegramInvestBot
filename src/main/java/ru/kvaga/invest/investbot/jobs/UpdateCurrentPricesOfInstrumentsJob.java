@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import ru.kvaga.investments.Instrument;
 import ru.kvaga.investments.lib.InstrumentsTrackingLib;
+import ru.kvaga.telegrambot.web.server.servlets.WorkingDay;
 //
 //import ru.kvaga.rss.feedaggr.Exec;
 //import ru.kvaga.rss.feedaggr.FeedAggrException.GetSubstringForHtmlBodySplitException;
@@ -27,6 +29,7 @@ import ru.kvaga.investments.lib.InstrumentsTrackingLib;
 //import ru.kvaga.rss.feedaggrwebserver.objects.user.User;
 //import ru.kvaga.rss.feedaggrwebserver.objects.user.UserFeed;
 import telegrambot.ConfigMap;
+import telegrambot.Settings;
 
 public class UpdateCurrentPricesOfInstrumentsJob implements Runnable {
 	final static Logger log = LogManager.getLogger(UpdateCurrentPricesOfInstrumentsJob.class);
@@ -63,6 +66,7 @@ public class UpdateCurrentPricesOfInstrumentsJob implements Runnable {
 
 	public void run() {
 		
+		
 		log.info("UpdateCurrentPricesOfStocksJob started");
 		if (!forcedBol) {
 			if (!ConfigMap.jobsEnabledBol) {
@@ -72,6 +76,12 @@ public class UpdateCurrentPricesOfInstrumentsJob implements Runnable {
 		}
 		
 		try {
+			if(!BackgroudJobManager.isWorkingDay()) {
+				return;
+			}
+			if(!BackgroudJobManager.isWorkingHours()) {
+				return;
+			}
 			updateStocks();
 			log.debug("UpdateCurrentPricesOfStocksJob finished");
 		} catch (Exception e) {

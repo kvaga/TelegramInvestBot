@@ -1,4 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <settings>
-    <telegramNotificationsTopCountForSending>2</telegramNotificationsTopCountForSending>
+    <telegramNotificationsTopCountForSending>5</telegramNotificationsTopCountForSending>
+    <workingDays>
+        <id>7</id>
+        <name>Saturday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>6</id>
+        <name>Friday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>4</id>
+        <name>Wednesday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>5</id>
+        <name>Thursday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>1</id>
+        <name>Sunday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>2</id>
+        <name>Monday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>3</id>
+        <name>Tuesday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingHours>
+        <hoursFrom>10</hoursFrom>
+        <hoursTo>23</hoursTo>
+        <minsFrom>3</minsFrom>
+        <minsTo>4</minsTo>
+    </workingHours>
 </settings>

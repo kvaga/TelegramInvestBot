@@ -73,6 +73,7 @@ public class StartStopListener implements ServletContextListener{
 			if(System.getProperty("TEST_MODE")!=null) {
 				ConfigMap.TEST_MODE=true;
 			}
+			
 			log("Loaded parameter TEST_MODE="+ConfigMap.TEST_MODE);
 			
 //			try {
@@ -162,24 +163,25 @@ public class StartStopListener implements ServletContextListener{
 			log("Loaded parameter telegram.channel.name="+ConfigMap.TELEGRAM_CHANNEL_NAME);
 			ConfigMap.TELEGRAM_BOT_NAME=props.getProperty("telegram.bot.name");
 			log("Loaded parameter telegram.bot.name="+ConfigMap.TELEGRAM_BOT_NAME);
-
-			ApiContextInitializer.init();
-	        Users.addUser(new User("Kvagalex"));
-	        if(investBot==null)
-	        	investBot = new InvestBot(ConfigMap.TELEGRAM_BOT_NAME, ConfigMap.TELEGRAM_TOKEN);
-	        int countOfConnectAttempts=5;
-	        while(investBot.botConnect()==null && --countOfConnectAttempts>0) {
-	        	try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e1) {
-					log.error(e1);
-				}
-	        }
-	        
-			App.telegramSendMessage = new ru.kvaga.telegram.sendmessage.TelegramSendMessage(ConfigMap.TELEGRAM_TOKEN, ConfigMap.TELEGRAM_CHANNEL_NAME, TelegramSendMessage.PARSE_MODE_HTML, TelegramSendMessage.WEB_PAGE_PREVIEW_DISABLE);
-
-	        log("telegrambot initialized");
-	        BackgroudJobManager.init();
+			if(!ConfigMap.TEST_MODE) {
+				ApiContextInitializer.init();
+		        Users.addUser(new User("Kvagalex"));
+		        if(investBot==null)
+		        	investBot = new InvestBot(ConfigMap.TELEGRAM_BOT_NAME, ConfigMap.TELEGRAM_TOKEN);
+		        int countOfConnectAttempts=5;
+		        while(investBot.botConnect()==null && --countOfConnectAttempts>0) {
+		        	try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e1) {
+						log.error(e1);
+					}
+		        }
+		        
+				App.telegramSendMessage = new ru.kvaga.telegram.sendmessage.TelegramSendMessage(ConfigMap.TELEGRAM_TOKEN, ConfigMap.TELEGRAM_CHANNEL_NAME, TelegramSendMessage.PARSE_MODE_HTML, TelegramSendMessage.WEB_PAGE_PREVIEW_DISABLE);
+	
+		        log("telegrambot initialized");
+		        BackgroudJobManager.init();
+			}
 		} catch (IOException | UnsupportedParameterException e) {
 			logError("Can't get configuration parameters of servlet or init", e);
 			return;
@@ -190,10 +192,12 @@ public class StartStopListener implements ServletContextListener{
 	    public void contextDestroyed(ServletContextEvent servletContextEvent) {
 //	    	if(InfluxDB.getInstance()!=null)
 //	    		InfluxDB.getInstance().destroy();
+	    	
 	    	BackgroudJobManager.destroy();
 	    	if(investBot!=null) {
 	    		investBot.destroy();
 	    	}
+	    	
 	        log.info("Servlet has been stopped.");
 	    }
 	    
