@@ -44,10 +44,10 @@ public class BackgroudJobManager {
 //		scheduler.scheduleAtFixedRate(new UpdateCurrentPricesOfStocksJob(listOfStocksFile), 0, 60, TimeUnit.SECONDS);
 		
 		if(!ConfigMap.TEST_MODE) {
-			schedulerStocks.scheduleAtFixedRate(new UpdateCurrentPricesOfInstrumentsJob(new StockItem(), ConfigMap.TEMPLATE_URL_TINKOFF_STOCKS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS), 0, 1, TimeUnit.HOURS);
-			log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfStocksJob for each 10 minutes]");
-			schedulerETFs.scheduleAtFixedRate(new UpdateCurrentPricesOfInstrumentsJob(new Etf(), 		ConfigMap.TEMPLATE_URL_TINKOFF_ETFS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_ETFS), 0, 1, TimeUnit.HOURS);
-			log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfETFsJob for each 10 minutes]");
+			schedulerStocks.scheduleAtFixedRate(new UpdateCurrentPricesOfInstrumentsJob(new StockItem(), ConfigMap.TEMPLATE_URL_TINKOFF_STOCKS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_STOCKS), 0, 3, TimeUnit.HOURS);
+			log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfStocksJob for each 3 hours]");
+			schedulerETFs.scheduleAtFixedRate(new UpdateCurrentPricesOfInstrumentsJob(new Etf(), 		ConfigMap.TEMPLATE_URL_TINKOFF_ETFS, ConfigMap.REGEX_PATTERN_TEXT_TINKOFF_FULL_NAME_ETFS), 0, 3, TimeUnit.HOURS);
+			log.info("BackgroudJobManager started with jobs [UpdateCurrentPricesOfETFsJob for each 3 hours]");
 //			schedulerBondsProfitability.scheduleAtFixedRate(new UpdateProfitabilityOfBonds(), 0, 24, TimeUnit.HOURS);			
 //			log.info("BackgroudJobManager started with jobs [UpdateProfitabilityOfBonds for each 24 hours]");
 		}
@@ -83,18 +83,23 @@ public class BackgroudJobManager {
 	}
 	
 	public static boolean isWorkingHours() throws JAXBException, IOException {
-		Date date = new Date();   // given date
-		Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
-		calendar.setTime(date);   // assigns calendar to given date 
-		if(calendar.get(Calendar.HOUR_OF_DAY)>=Settings.getInstance().getWorkingHours().getHoursFrom() &&
-				calendar.get(Calendar.HOUR_OF_DAY)<=Settings.getInstance().getWorkingHours().getHoursTo() &&
-						calendar.get(Calendar.MINUTE)>=Settings.getInstance().getWorkingHours().getMinsFrom() &&
-						calendar.get(Calendar.MINUTE)<=Settings.getInstance().getWorkingHours().getMinsTo()
-				) {
+		Date currentDate = new Date();   // given date
+//		Calendar calendarCurrent = GregorianCalendar.getInstance(); // creates a new calendar instance
+//		calendarCurrent.setTime(date);   // assigns calendar to given date
+		
+		Calendar calFrom = GregorianCalendar.getInstance();
+		calFrom.set(Calendar.HOUR_OF_DAY, Settings.getInstance().getWorkingHours().getHoursFrom());
+		calFrom.set(Calendar.MINUTE, Settings.getInstance().getWorkingHours().getMinsFrom());
+		
+		Calendar calTo = GregorianCalendar.getInstance();
+		calTo.set(Calendar.HOUR_OF_DAY, Settings.getInstance().getWorkingHours().getHoursTo());
+		calTo.set(Calendar.MINUTE, Settings.getInstance().getWorkingHours().getMinsTo());
+		Date from = calFrom.getTime();
+		Date to = calTo.getTime();
+		if(	currentDate.after(from) && currentDate.before(to)) { 
 			return true;
 		}
-		log.debug("Current hours ["+Calendar.HOUR_OF_DAY+":"+Calendar.MINUTE+"] are not working because working hours are ["+Settings.getInstance().getWorkingHours().getHoursFrom()+":"+Settings.getInstance().getWorkingHours().getMinsFrom()+"-"+Settings.getInstance().getWorkingHours().getHoursTo()+":"+Settings.getInstance().getWorkingHours().getMinsTo()+"]");
-
+		log.debug("Current time ["+currentDate+"] is out of range from ["+from+"] to ["+to+"]");
 		return false;
 	}
 }
