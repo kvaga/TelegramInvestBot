@@ -2,26 +2,6 @@
 <settings>
     <telegramNotificationsTopCountForSending>5</telegramNotificationsTopCountForSending>
     <workingDays>
-        <id>7</id>
-        <name>Saturday</name>
-        <workingDayBol>true</workingDayBol>
-    </workingDays>
-    <workingDays>
-        <id>6</id>
-        <name>Friday</name>
-        <workingDayBol>true</workingDayBol>
-    </workingDays>
-    <workingDays>
-        <id>4</id>
-        <name>Wednesday</name>
-        <workingDayBol>true</workingDayBol>
-    </workingDays>
-    <workingDays>
-        <id>5</id>
-        <name>Thursday</name>
-        <workingDayBol>true</workingDayBol>
-    </workingDays>
-    <workingDays>
         <id>1</id>
         <name>Sunday</name>
         <workingDayBol>true</workingDayBol>
@@ -36,10 +16,30 @@
         <name>Tuesday</name>
         <workingDayBol>true</workingDayBol>
     </workingDays>
+    <workingDays>
+        <id>4</id>
+        <name>Wednesday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>5</id>
+        <name>Thursday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>6</id>
+        <name>Friday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
+    <workingDays>
+        <id>7</id>
+        <name>Saturday</name>
+        <workingDayBol>true</workingDayBol>
+    </workingDays>
     <workingHours>
         <hoursFrom>10</hoursFrom>
         <hoursTo>23</hoursTo>
-        <minsFrom>3</minsFrom>
-        <minsTo>4</minsTo>
+        <minsFrom>30</minsFrom>
+        <minsTo>40</minsTo>
     </workingHours>
 </settings>

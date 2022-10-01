@@ -79,6 +79,7 @@ public class BackgroudJobManager {
 			log.debug("Today ["+todaysDayOfWeek+"] is not working day because working days are ["+Settings.getInstance().getWorkingDays()+"]");
 			return false;
 		}
+		log.debug("Today ["+todaysDayOfWeek+"] is a working day because working days are ["+Settings.getInstance().getWorkingDays()+"]");
 		return true;
 	}
 	
@@ -97,6 +98,7 @@ public class BackgroudJobManager {
 		Date from = calFrom.getTime();
 		Date to = calTo.getTime();
 		if(	currentDate.after(from) && currentDate.before(to)) { 
+			log.debug("Current time ["+currentDate+"] is in the range from ["+from+"] to ["+to+"]");
 			return true;
 		}
 		log.debug("Current time ["+currentDate+"] is out of range from ["+from+"] to ["+to+"]");
