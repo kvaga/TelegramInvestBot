@@ -74,13 +74,18 @@ public class BackgroudJobManager {
 	public static boolean isWorkingDay() throws JAXBException, IOException {
 		Calendar cal = Calendar.getInstance();
 	    cal.setTime(new Date());
-	    int todaysDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-		if(!Settings.getInstance().getWorkingDays().contains(new WorkingDay(todaysDayOfWeek))) {
-			log.debug("Today ["+todaysDayOfWeek+"] is not working day because working days are ["+Settings.getInstance().getWorkingDays()+"]");
-			return false;
+	    int todaysDayOfWeekNumber = cal.get(Calendar.DAY_OF_WEEK);
+	    WorkingDay todaysWorkingDay = new WorkingDay(todaysDayOfWeekNumber);
+		if(Settings.getInstance().getWorkingDays().contains(todaysWorkingDay)) {
+			for(WorkingDay item : Settings.getInstance().getWorkingDays() ) {
+				if(item.equals(cal) && item.isWorkingDayBol()) {
+					log.debug("Today ["+todaysWorkingDay+"] is a working day because working days are ["+Settings.getInstance().getWorkingDays()+"]");
+					return true;
+				}
+			}
 		}
-		log.debug("Today ["+todaysDayOfWeek+"] is a working day because working days are ["+Settings.getInstance().getWorkingDays()+"]");
-		return true;
+		log.debug("Today ["+todaysWorkingDay+"] is not working day because working days are ["+Settings.getInstance().getWorkingDays()+"]");
+		return false;
 	}
 	
 	public static boolean isWorkingHours() throws JAXBException, IOException {
