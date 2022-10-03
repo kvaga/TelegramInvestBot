@@ -78,7 +78,7 @@ public class BackgroudJobManager {
 	    WorkingDay todaysWorkingDay = new WorkingDay(todaysDayOfWeekNumber);
 		if(Settings.getInstance().getWorkingDays().contains(todaysWorkingDay)) {
 			for(WorkingDay item : Settings.getInstance().getWorkingDays() ) {
-				if(item.equals(cal) && item.isWorkingDayBol()) {
+				if(item.equals(todaysWorkingDay) && item.isWorkingDayBol()) {
 					log.debug("Today ["+todaysWorkingDay+"] is a working day because working days are ["+Settings.getInstance().getWorkingDays()+"]");
 					return true;
 				}
